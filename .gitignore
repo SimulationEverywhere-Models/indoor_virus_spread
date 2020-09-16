@@ -3,8 +3,8 @@ bin/*
 CMakeFiles/*
 
 results/*
-
-cmake_install*
-CMakeCache*
+cmake_install.*
+CMakeCache.*
 Makefile
-CTestTestfile*
+CTestTestfile.*
+CMakeLists.*

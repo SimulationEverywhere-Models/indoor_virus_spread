@@ -1,1 +1,0 @@
-/usr/bin/g++.exe -g  -Wl,--enable-auto-import CMakeFiles/co2_lab.dir/model/co2_main.cpp.o  -o ../bin/co2_lab.exe -Wl,--out-implib,libco2_lab.dll.a -Wl,--major-image-version,0,--minor-image-version,0  /usr/lib/libboost_program_options.dll.a 
