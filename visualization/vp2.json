@@ -1,5 +1,5 @@
 {
-    "model": vp_model",
+    "model": "VP_model",
     "size": [38, 57, 1],
     "ports": [{
             "name": "counter",

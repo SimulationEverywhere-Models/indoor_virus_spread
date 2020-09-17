@@ -12,15 +12,15 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/bin/results)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../cadmium/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../cadmium/json/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../cadmium/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../cadmium/json/include)
 
 
 find_package(Boost COMPONENTS program_options unit_test_framework REQUIRED)
 include_directories (${Boost_INCLUDE_DIRS})
 
 
-add_executable(vp ../model/vp_main.cpp)
+add_executable(vp model/vp_main.cpp)
 target_link_libraries(vp Boost::program_options)
 
 

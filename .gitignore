@@ -1,3 +1,9 @@
-build/*
+results/*
+bin/*
+CMakeFiles/*
 
-!CMakeLists.*
+
+cmake_install.*
+CMakeCache.*
+CTestTestfile.*
+Makefile.*
