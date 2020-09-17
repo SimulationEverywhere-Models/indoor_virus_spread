@@ -1,8 +1,8 @@
-bin/*
+build/*
 
-CMakeFiles/*
+model/results/*
 
-results/*
+results.*
 cmake_install.*
 CMakeCache.*
 Makefile
