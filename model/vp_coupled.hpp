@@ -33,7 +33,7 @@
 
 #include <nlohmann/json.hpp>
 #include <cadmium/celldevs/coupled/grid_coupled.hpp>
-#include "vp_lab_cell.hpp"
+#include "vp_res_cell.hpp"
 
 template <typename T>
 class vp_coupled : public cadmium::celldevs::grid_coupled<T, vp, int> {
