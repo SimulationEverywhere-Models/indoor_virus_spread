@@ -42,20 +42,20 @@ using namespace std;
 /************************************/
 /******COMPLEX STATE STRUCTURE*******/
 /************************************/
-enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400, WINDOW=-500, VENTILATION=-600, WORKSTATION=-700};
+enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400, WINDOW=-500, VENTILATION=-600, TABLE=-700, vp_RECEIVER=-800};
 struct vp {
     int counter;
-    int concentration;
+    int num_particles;
     CELL_TYPE type;
-	int breathing_counter=5; //number of cycles since this cell became a vp source. Used to know when to add the concentration increase for vp sources. The default is every five seconds
+	int breathing_counter=5; //number of cycles since this cell became a vp source. Used to know when to add the bags of particels to the cell where the vp source is located. The default is every five seconds
 
-    vp() : counter(-1), concentration(500), type(AIR), breathing_counter(0) {}  // a default constructor is required
-    vp(int i_counter, int i_concentration, CELL_TYPE i_type, int i_breathing_counter) : counter(i_counter), concentration(i_concentration), type(i_type), breathing_counter(i_breathing_counter){}
+    vp() : counter(-1), num_particles(500), type(AIR), breathing_counter(5) {}  // a default constructor is required
+    vp(int i_counter, int i_num_particles, CELL_TYPE i_type, int i_breathing_counter) : counter(i_counter), num_particles(i_num_particles), type(i_type), breathing_counter(i_breathing_counter) {}
 };
 // Required for comparing states and detect any change
 inline bool operator != (const vp &x, const vp &y) {
 	//note that breathing_counter is not included here intentionally as it is onlu used to add the breathing factor
-    return (x.counter != y.counter || x.concentration != y.concentration || x.type != y.type );
+    return (x.counter != y.counter || x.num_particles != y.num_particles || x.type != y.type );
 }
 // Required if you want to use transport delay (priority queue has to sort messages somehow)
 inline bool operator < (const vp& lhs, const vp& rhs){ return true; }
@@ -63,14 +63,14 @@ inline bool operator < (const vp& lhs, const vp& rhs){ return true; }
 // Required for printing the state of the cell
 std::ostream &operator << (std::ostream &os, const vp &x) {
 	//note that breathing_counter is not included here as it is not useful for visualization and it will only slow the simulation to include it. Keep it this way unless needed for another reason
-    os << "<" << x.counter << "," << x.concentration << "," << x.type << ">";
+    os << "<" << x.counter << "," << x.num_particles << "," << x.type << ">";
     return os;
 }
 
 // Required for creating vp objects from JSON file
 void from_json(const json& j, vp &s) {
     j.at("counter").get_to(s.counter);
-    j.at("concentration").get_to(s.concentration);
+    j.at("num_particles").get_to(s.num_particles);
     j.at("type").get_to(s.type);
     //j.at("breathing_counter").get_to(s.breathing_counter);
 }
@@ -86,26 +86,22 @@ struct conc {
     int vent_conc; //vp level at vent
     int resp_time;
 	int breathing_rate;
-	int time_active; //amount of time in states spent at workstation
-	int start_time; //start state for workstation occupation
+	int time_active; //amount of time in states spent at TABLE
+	int start_time; //start state for TABLE occupation
 
     // Each cell is 25cm x 25cm x 25cm = 15.626 Liters of air each
-      // vp sources have their concentration continually increased by default by 12.16 ppm every 5 seconds.
-    conc(): vp_production(0.0155), cell_size(25), base(500), resp_time(5), window_conc(400), vent_conc(400), breathing_rate(5), time_active(100), start_time(30) {}
-    conc(float ci, float cs, int b, int wc, int vc, int r, int br, int ta, int st): vp_production(ci), cell_size(cs), base(b), resp_time(r), window_conc(wc), vent_conc(vc), breathing_rate(br), time_active(ta), start_time(st) {}
+      // vp sources have their num_particles continually increased by default by 12.16 ppm every 5 seconds.
+    conc(): vp_production(2.75), cell_size(25), base(0), resp_time(1), window_conc(0), vent_conc(0), breathing_rate(5), time_active(100), start_time(5) {}
+    conc(float ci, float cs, int b, int wc, int vc, int r, int br, int ta, int st, int ns): vp_production(ci), cell_size(cs), base(b), resp_time(r), window_conc(wc), vent_conc(vc), breathing_rate(br), time_active(ta), start_time(st) {}
 };
 void from_json(const json& j, conc &c) {
     j.at("vp_production").get_to(c.vp_production);
     j.at("cell_size").get_to(c.cell_size);
-    j.at("base").get_to(c.base);
     j.at("resp_time").get_to(c.resp_time);
-    j.at("window_conc").get_to(c.window_conc);
-    j.at("vent_conc").get_to(c.vent_conc);
     j.at("breathing_rate").get_to(c.breathing_rate);
 	j.at("time_active").get_to(c.time_active);
 	j.at("start_time").get_to(c.start_time);
 }
-
 
 template <typename T>
 class vp_lab_cell : public grid_cell<T, vp> {
@@ -116,14 +112,13 @@ public:
     using grid_cell<T, vp, int>::neighbors;
 
     using config_type = conc;  // IMPORTANT FOR THE JSON   
-    float concentration_increase; //// vp sources have their concentration continually increased
+    float num_particles_increase; //// vp sources have their num_particles continually increased
     int base; //vp base level 
-    int resp_time; //Time used to calculate the concentration inscrease /// set in JSON
-    int window_conc; //vp level at window
-    int vent_conc; //vp level at cent
+    int resp_time; //Time used to calculate the num_particles inscrease /// set in JSON
 	int breathing_rate; ///the interval between two consecutive breaths in seconds.//set intially from the JSON
-	int time_active; ///time spent by the person at the workstation ///set in JSON
-	int start_time; ///start time for workstation occupation ///set in JSON
+	int time_active; ///time spent by the person at the TABLE ///set in JSON
+	int start_time; ///start time for TABLE occupation ///set in JSON
+    cell_position pos;
 
  
     vp_lab_cell() : grid_cell<T, vp, int>() {
@@ -132,94 +127,98 @@ public:
     vp_lab_cell(cell_position const &cell_id, cell_unordered<int> const &neighborhood, vp initial_state,
         cell_map<vp, int> const &map_in, std::string const &delayer_id, conc config) :
             grid_cell<T, vp>(cell_id, neighborhood, initial_state, map_in, delayer_id) {
-                concentration_increase = 1000 * 10000*config.vp_production/pow(config.cell_size,3);
+                num_particles_increase = 1000 * 10000 * config.vp_production/pow(config.cell_size,3);
                 base = config.base;
                 resp_time = config.resp_time;
-                window_conc = config.window_conc;
-                vent_conc = config.vent_conc;
 				breathing_rate = config.breathing_rate;
 				time_active = config.time_active;
 				start_time = config.start_time;
+                pos = cell_id;
+
     }
 
     vp local_computation() const override {
         vp new_state = state.current_state;
         switch(new_state.type){
             case IMPERMEABLE_STRUCTURE: 
-                new_state.concentration = 0;
+                new_state.num_particles = 0;
                 break;
-            case DOOR:    
-                new_state.concentration = base;
+            case DOOR:  
+                new_state.num_particles = base;
                 break;
             case WINDOW:
-                new_state.concentration = window_conc;
+                new_state.num_particles = base;
                 break;
             case VENTILATION:
-                new_state.concentration = vent_conc;
+                new_state.num_particles = base;
                 break;
             case AIR:{
-                int concentration = 0;
-                int num_neighbors = 0;                
+                int num_particles = 0;
+                int num_neighbors = 0;
                 for(auto neighbors: state.neighbors_state) {
-                    if( neighbors.second.concentration < 0){
-                        assert(false && "vp concentration cannot be negative");
+                    if( neighbors.second.num_particles < 0){
+                        assert(false && "vp num_particles cannot be negative");
                     }
                     if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
-                        concentration += neighbors.second.concentration;
+                        num_particles += neighbors.second.num_particles;
                         num_neighbors +=1;
                     }
                 }
-                new_state.concentration = concentration/num_neighbors;
-                break;             
-            }
-            case WORKSTATION:{
-                int concentration = 0;
-                int num_neighbors = 0;                
+                new_state.num_particles = num_particles/num_neighbors;
+                break;  
+            }           
+            case TABLE:{
+                int num_particles = 0;
+                int num_neighbors = 0;
                 for(auto neighbors: state.neighbors_state) {
-                    if( neighbors.second.concentration < 0){
-                        assert(false && "vp concentration cannot be negative");
+                    if( neighbors.second.num_particles < 0){
+                        assert(false && "vp num_particles cannot be negative");
                     }
                     if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
-                        concentration += neighbors.second.concentration;
+                        num_particles += neighbors.second.num_particles;
                         num_neighbors +=1;
                     }
                 }
-                new_state.concentration = concentration/num_neighbors;
+                new_state.num_particles = num_particles/num_neighbors;
                 
                     
                 if (state.current_state.counter <= start_time) { //TODO parameterize //done
-                    new_state.counter += 1;                   
+                    new_state.counter += 1;
                 }
 
                 if (state.current_state.counter == start_time){
-                    new_state.type = vp_SOURCE; 
-					new_state.breathing_counter = 0;
+                    vector<int> source = {11,3,4};
+                    if(pos == source) {
+                        cout << "pos == source" << endl;
+                        new_state.type = vp_SOURCE;
+                        new_state.breathing_counter = 0;
+                    }
+
 				}
                 break;
             }
             case vp_SOURCE:{
-                int concentration = 0;
+                int num_particles = 0;
                 int num_neighbors = 0;
                 for(auto neighbors: state.neighbors_state) {
-                  if( neighbors.second.concentration < 0){
-                        assert(false && "vp concentration cannot be negative");
+                  if( neighbors.second.num_particles < 0){
+                        assert(false && "vp num_particles cannot be negative");
                     }
-                      if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
-                        concentration += neighbors.second.concentration;
-                        num_neighbors +=1;
-                    }               
+                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
+                                              
+                        //num_particles += neighbors.second.num_particles;
+                        //num_neighbors +=1;
+
+                    }
                 }
                 
-                new_state.concentration = (concentration/num_neighbors);
-				//The concentration increases every time an occupant breathes (the default breathing rate is every five seconds)
+                new_state.num_particles = (num_particles/num_neighbors);
+				//The num_particles increases every time an occupant breathes (the default breathing rate is every five seconds)
 				if( (new_state.breathing_counter % breathing_rate) == 0){
-					new_state.concentration += (concentration_increase);
+					new_state.num_particles += (num_particles_increase);
 				}
 				new_state.breathing_counter++;
                 new_state.counter += 1;
-                if (state.current_state.counter == time_active ) { //TODO parameterize //done
-                    new_state.type = WORKSTATION; //The student left. The place is free.
-                }
                 break;
             }
             default:{
@@ -229,7 +228,8 @@ public:
       
         return new_state;
 
-    }
+        }
+    
 
     
     // It returns the delay to communicate cell's new state.
@@ -240,16 +240,3 @@ public:
 };
 
 #endif //CADMIUM_CELLDEVS_vp_CELL_HPP
-
-
-
-
-
-
-
-
-
-
-
-
-
