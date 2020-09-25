@@ -1,7 +1,8 @@
 results/*
 bin/*
 CMakeFiles/*
-
+model/results/*
+model/vp
 
 cmake_install.*
 CMakeCache.*
