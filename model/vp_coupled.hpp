@@ -36,19 +36,19 @@
 #include "vp_res_cell.hpp"
 
 template <typename T>
-class vp_coupled : public cadmium::celldevs::grid_coupled<T, vp, int> {
+class vp_coupled : public cadmium::celldevs::grid_coupled<T, vp_cell, int> {
 public:
 
-    explicit vp_coupled(std::string const &id) : grid_coupled<T, vp, int>(id){}
+    explicit vp_coupled(std::string const &id) : grid_coupled<T, vp_cell, int>(id){}
 
     template <typename X>
     using cell_unordered = std::unordered_map<std::string,X>;
 
-    void add_grid_cell_json(std::string const &cell_type, cell_map<vp, int> &map, std::string const &delay_id,
+    void add_grid_cell_json(std::string const &cell_type, cell_map<vp_cell, int> &map, std::string const &delay_id,
                             nlohmann::json const &config) override {
         if (cell_type == "vp_cell") {
-            auto conf = config.get<typename vp_lab_cell<T>::config_type>();
-            this->template add_cell<vp_lab_cell>(map, delay_id, conf);
+            auto conf = config.get<typename vp_res_cell<T>::config_type>();
+            this->template add_cell<vp_res_cell>(map, delay_id, conf);
         } else throw std::bad_typeid();
     }
 };
