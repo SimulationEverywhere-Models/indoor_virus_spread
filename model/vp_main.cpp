@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
         return -1;
     }
 
-    vp_coupled<TIME> test = vp_coupled<TIME>("vp_lab");
+    vp_coupled<TIME> test = vp_coupled<TIME>("vp_res");
     std::string scenario_config_file_path = argv[1];
     test.add_lattice_json(scenario_config_file_path);
     test.couple_cells();

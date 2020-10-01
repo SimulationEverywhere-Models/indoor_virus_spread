@@ -1,6 +1,6 @@
 {
-    "model": "VP_model",
-    "size": [24, 20, 13],
+    "model": "vp_model",
+    "size": [24, 20, 1],
     "ports": [{
             "name": "counter",
             "style": 0
@@ -33,93 +33,83 @@
                 "color": [0, 0, 0]
             }, {
                 "start": 1,
-                "end": 40,
+                "end": 11,
                 "color": [255, 255, 255]
             }, {
-                "start": 40,
-                "end": 80,
+                "start": 11,
+                "end": 22,
                 "color": [230, 230, 255]
             }, {
-                "start": 80,
-                "end": 120,
+                "start": 22,
+                "end": 33,
                 "color": [204, 204, 255]
             }, {
-                "start": 120,
-                "end": 160,
+                "start": 33,
+                "end": 44,
                 "color": [179, 179, 255]
             }, {
-                "start": 160,
-                "end": 200,
+                "start": 44,
+                "end": 55,
                 "color": [153, 153, 255]
             }, {
-                "start": 200,
-                "end": 240,
+                "start": 55,
+                "end": 66,
                 "color": [128, 128, 255]
             }, {
-                "start": 240,
-                "end": 280,
+                "start": 66,
+                "end": 77,
                 "color": [102, 102, 255]
             }, {
-                "start": 280,
-                "end": 320,
+                "start": 77,
+                "end": 88,
                 "color": [77, 77, 255]
             }, {
-                "start": 320,
-                "end": 360,
-                "color": [52, 52, 255]
-            }, {
-                "start": 360,
-                "end": 400,
-                "color": [26, 26, 255]
-                
-            }, {
-                "start": 400,
-                "end": 440,
+                "start": 88,
+                "end": 99,
                 "color": [0, 0, 255]
-                
             }, {
-                "start": 440,
-                "end": 560,
-                "color": [255, 255, 255]
+                "start": 99,
+                "end": 121,
+                "color": [26, 26, 255]
             }, {
-                "start": 560,
-                "end": 600,
+                "start": 121,
+                "end": 132,
                 "color": [255, 230, 230]
             }, {
-                "start": 600,
-                "end": 640,
+                "start": 132,
+                "end": 143,
                 "color": [255, 204, 204]
             }, {
-                "start": 640,
-                "end": 700,
+                "start": 143,
+                "end": 154,
                 "color": [255, 179, 179]
             }, {
-                "start": 700,
-                "end": 740,
+                "start": 154,
+                "end": 165,
                 "color": [255, 153, 153]
             }, {
-                "start": 740,
-                "end": 800,
+                "start": 165,
+                "end": 176,
                 "color": [255, 128, 128]
             }, {
-                "start": 800,
-                "end": 840,
+                "start": 176,
+                "end": 187,
                 "color": [255, 102, 102]
             }, {
-                "start": 840,
-                "end": 900,
+                "start": 187,
+                "end": 198,
                 "color": [255, 77, 77]
             }, {
-                "start": 900,
-                "end": 940,
+                "start": 198,
+                "end": 209,
                 "color": [255, 51, 51]
             }, {
-                "start": 940,
-                "end": 1000,
+                "start": 209,
+                "end": 220,
                 "color": [255, 26, 26]
             }, {
-                "start": 1000,
-                "end": 1000000,
+                "start": 220,
+                "end": 100000, 
                 "color": [255, 0, 0]
             }
         ],
