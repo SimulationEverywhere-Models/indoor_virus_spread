@@ -46,28 +46,26 @@ enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400,
 
 struct vp {
     int distance_travelled;
-    bool idle;
-    int id;
-
+    bool idle; 
     vp() : distance_travelled(0), idle(false) {}
 };
 
 struct vp_cell {
     int counter;
     CELL_TYPE type;
-    vector<vp> particles;
+    vector<pair<vp, vector<int>>> particles;
     int breathing_counter;
     int num_particles_cell;
 
     vp_cell() : counter(-1), type(AIR), breathing_counter(5), num_particles_cell(0) {}  // a default constructor is required
-    vp_cell(int i_counter, CELL_TYPE i_type, int i_breathing_counter, vector<vp> i_particles, int i_num_particles_cell) : counter(i_counter), type(i_type), breathing_counter(i_breathing_counter), particles(i_particles), num_particles_cell(i_num_particles_cell) {}
-
+    vp_cell(int i_counter, CELL_TYPE i_type, int i_breathing_counter, vector<pair<vp, vector<int>>> i_particles, int i_num_particles_cell) : counter(i_counter), type(i_type), breathing_counter(i_breathing_counter), particles(i_particles), num_particles_cell(i_num_particles_cell) {}
+    
 };
 
 // Required for comparing states and detect any change
 inline bool operator != (const vp_cell &x, const vp_cell &y) {
 	//note that breathing_counter is not included here intentionally as it is onlu used to add the breathing factor
-    return (x.counter != y.counter || x.num_particles_cell != y.num_particles_cell || x.type != y.type );
+    return (x.counter != y.counter || x.num_particles_cell != y.num_particles_cell || x.type != y.type);
 }
 
 // Required if you want to use transport delay (priority queue has to sort messages somehow)
@@ -174,11 +172,17 @@ public:
                         if( neighbors.second.num_particles_cell < 0){
                             assert(false && "number of cells cannot be negative");
                         }
-                        if(neighbors.second.type == vp_SOURCE && neighbors.second.particles.size() > 0) {
-                            vp new_particle = neighbors.second.particles.back();
-                            new_particle.distance_travelled += 25;
-                            new_state.particles.push_back(new_particle);
-                            new_state.num_particles_cell = new_state.particles.size();
+                        if(neighbors.second.particles.size() > 0) {
+                            pair<vp, vector<int>> new_particle;
+                            new_particle.second = pos;
+                            for(vector<pair<vp, vector<int>>>::iterator it = neighbors.second.particles.begin(); it!=neighbors.second.particles.end() ;it++) {
+                                if(it->second == pos) {
+                                    new_particle.first.distance_travelled += 25;
+                                    new_state.num_particles_cell = new_state.particles.size();
+                                    new_state.particles.push_back(new_particle);
+                                    neighbors.second.particles.erase(it);
+                                }
+                            }
                         }
                     }
                 }
@@ -216,30 +220,22 @@ public:
                 break;
             }
             case vp_SOURCE:{
+                int index = 0;
                 for(auto neighbors: state.neighbors_state) {
                     if( neighbors.second.num_particles_cell < 0){
                         assert(false && "vp num_particles cannot be negative");
                     }
-                    if(neighbors.second.type == AIR){
-                        vector<int> ids = {};
-                        for(auto particle: neighbors.second.particles) {
-                            ids.push_back(particle.id);
-                        }
-                        for(int i=0; i<ids.size(); i++) {
-                            if(new_state.particles.size() == 0) {
-                                break;
-                            }
-                            for(vector<vp>::iterator it = new_state.particles.begin(); it!=new_state.particles.end() ;it++) {
-                                if(it->id == ids[i]) {
-                                    new_state.particles.erase(it);
-                                    new_state.num_particles_cell = new_state.particles.size();
-                                }
-                            }
-                        }
+                    if(new_state.num_particles_cell > (new_state.counter - 1)/10) {
+                        cout << "num particles in cell: " << new_state.num_particles_cell << endl;
+                        new_state.particles[index].second = neighbors.first;
+                        new_state.num_particles_cell--;
+                        index++;
+                        cout << "next pos: " << new_state.particles[index].second << endl;
                     }
                 }
 				//The num_particles increases every time an occupant breathes (the default breathing rate is every five seconds)
 				if( (new_state.breathing_counter % breathing_rate) == 0) {
+                    cout << "Counter: " << new_state.counter << endl;
                     populateParticles(new_state);
 				}
 				new_state.breathing_counter++;
@@ -253,27 +249,21 @@ public:
         }
         return new_state;
     }
-    
-    pullParticle(vp_cell& from) const{
-
-        if(from.type == AIR) {
-
-        }
-    }
 
     void populateParticles(vp_cell& cell) const {
         for (int i = 0; i < num_particles_increase; i++) {
-            vp new_particle;
-            new_particle.id = (cell.counter - 21) + i;
+            vp particle;
+            vector<int> cell_id;
+            pair<vp, vector<int>> new_particle;
+            new_particle = make_pair(particle, cell_id);
             cell.particles.push_back(new_particle);
-            cell.num_particles_cell = cell.particles.size();
         }
-        printCellData(cell);
+        cell.num_particles_cell += num_particles_increase;
+        //printCellData(cell);
     }
 
     void printParticleData(vp& particle) const {
         cout << "Distance travelled: " << particle.distance_travelled << endl;
-        cout << "ID: " << particle.id << endl;
         cout << "Idle: " << particle.idle << endl;
     }
 
@@ -288,7 +278,7 @@ public:
     
     // It returns the delay to communicate cell's new state.
     T output_delay(vp_cell const &cell_state) const override {
-			return resp_time;
+		return resp_time;
     }
 
 };
