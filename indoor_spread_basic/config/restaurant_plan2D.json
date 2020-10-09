@@ -5,7 +5,7 @@
             20
         ],
         "wrapped": false,
-        "default_delay": "transport",
+        "default_delay": "inertial",
         "default_cell_type": "vp_cell",
         "default_state": {
             "counter": -1,

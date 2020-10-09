@@ -49,9 +49,9 @@ struct vp_cell {
     CELL_TYPE type;
     int breathing_counter;
     int num_particles;
-    int remainder;
+    int neighbor_portion;
 
-    vp_cell() : counter(-1), type(AIR), breathing_counter(20), num_particles(0), remainder(0) {}  // a default constructor is required
+    vp_cell() : counter(-1), type(AIR), breathing_counter(20), num_particles(0), neighbor_portion(0) {}  // a default constructor is required
     vp_cell(int i_counter, CELL_TYPE i_type, int i_breathing_counter, int i_num_particles) : counter(i_counter), type(i_type), breathing_counter(i_breathing_counter), num_particles(i_num_particles) {}
     
 };
@@ -59,7 +59,7 @@ struct vp_cell {
 // Required for comparing states and detect any change
 inline bool operator != (const vp_cell &x, const vp_cell &y) {
 	//note that breathing_counter is not included here intentionally as it is onlu used to add the breathing factor
-    return (x.counter != y.counter || x.num_particles + x.remainder != y.num_particles + y.remainder || x.type != y.type);
+    return (x.counter != y.counter || x.num_particles != y.num_particles || x.type != y.type);
 }
 
 // Required if you want to use transport delay (priority queue has to sort messages somehow)
@@ -68,7 +68,7 @@ inline bool operator < (const vp_cell& lhs, const vp_cell& rhs){ return true; }
 // Required for printing the state of the cell
 std::ostream &operator << (std::ostream &os, const vp_cell &x) {
 	//note that breathing_counter is not included here as it is not useful for visualization and it will only slow the simulation to include it. Keep it this way unless needed for another reason
-    os << "<" << x.counter << "," << x.num_particles + x.remainder << "," << x.type << ">";
+    os << "<" << x.counter << "," << x.num_particles << "," << x.type << ">";
     return os;
 }
 
@@ -143,7 +143,7 @@ public:
 
    vp_cell local_computation() const override {
         vp_cell new_state = state.current_state;
-        switch(new_state.type){
+        switch(new_state.type) {
             case IMPERMEABLE_STRUCTURE: 
                 new_state.num_particles = 0;
                 break;
@@ -156,63 +156,60 @@ public:
             case VENTILATION:
                 new_state.num_particles = 0;
                 break;
-            case AIR:{    
-                if(new_state.num_particles % 9 == 1 && new_state.num_particles > 9) {
-                    new_state.num_particles = 0;
+            case AIR:{
+                int num_neighbors = 0;
+                int num_particles = 0;
+                if(new_state.neighbor_portion > 0) {
+                    new_state.neighbor_portion = 0;
                 }
-                if(new_state.num_particles >= 9) {
-                    new_state.remainder += (new_state.num_particles % 9);
-                    new_state.num_particles = (new_state.num_particles - new_state.remainder);
-                }  
+
                 for(auto neighbors: state.neighbors_state) {
-                    /*
                     if( neighbors.second.num_particles < 0){
                         assert(false && "vp_cell num_particles cannot be negative");
-                    }
-                    */
-                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE && neighbors.second.num_particles > 0){
-                        int num_neighbor_particles = neighbors.second.num_particles;
-                        int num_neighbor_remainder = neighbors.second.remainder;
-                        if((num_neighbor_particles + num_neighbor_remainder) % 9 == 0) {
-                            new_state.num_particles += (num_neighbor_particles + num_neighbor_remainder)/9;
-                        }
-                        else if(num_neighbor_particles % 9 == 0) {
-                            new_state.num_particles += num_neighbor_particles/9;
-                        }
-                        else {
-                            continue;
-                        }
+                    }   
+                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
+                        num_particles += neighbors.second.neighbor_portion;
+                        num_neighbors++;
                     }
                 }
-                break;             
+                new_state.num_particles = new_state.neighbor_portion + (new_state.num_particles % num_neighbors);
+
+                new_state.num_particles += num_particles;
+
+                if(num_neighbors == 4 || num_neighbors == 6 || num_neighbors == 9) {
+                    new_state.neighbor_portion = new_state.num_particles - (new_state.num_particles % num_neighbors);
+                } 
+                if(new_state.neighbor_portion % num_neighbors == 0) {
+                    new_state.neighbor_portion = new_state.num_particles/num_neighbors;
+                }
+                
+                break;
             }
-            case TABLE:{   
-                if(new_state.num_particles % 9 == 1 && new_state.num_particles > 9) {
-                    new_state.num_particles = 0;
-                }  
-                if(new_state.num_particles >= 9) {
-                    new_state.remainder += (new_state.num_particles % 9);
-                    new_state.num_particles = (new_state.num_particles - new_state.remainder);
-                }         
+            case TABLE:{  
+                int num_neighbors = 0;
+                int num_particles = 0;
+                if(new_state.neighbor_portion > 0) {
+                    new_state.neighbor_portion = 0;
+                }
+
                 for(auto neighbors: state.neighbors_state) {
-                    /*
                     if( neighbors.second.num_particles < 0){
                         assert(false && "vp_cell num_particles cannot be negative");
+                    }   
+                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
+                        num_particles += neighbors.second.neighbor_portion;
+                        num_neighbors++;
                     }
-                    */
-                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE && neighbors.second.num_particles > 0){
-                        int num_neighbor_particles = neighbors.second.num_particles;
-                        int num_neighbor_remainder = neighbors.second.remainder;
-                        if((num_neighbor_particles + num_neighbor_remainder) % 9 == 0) {
-                            new_state.num_particles += (num_neighbor_particles + num_neighbor_remainder)/9;
-                        }
-                        else if(num_neighbor_particles % 9 == 0) {
-                            new_state.num_particles += num_neighbor_particles/9;
-                        }
-                        else {
-                            continue;
-                        }
-                    }
+                }
+                new_state.num_particles = new_state.neighbor_portion + (new_state.num_particles % num_neighbors);
+
+                new_state.num_particles += num_particles;
+
+                if(num_neighbors == 4 || num_neighbors == 6 || num_neighbors == 9) {
+                    new_state.neighbor_portion = new_state.num_particles - (new_state.num_particles % num_neighbors);
+                } 
+                if(new_state.neighbor_portion % num_neighbors == 0) {
+                    new_state.neighbor_portion = new_state.num_particles/num_neighbors;
                 }
 
                 if (state.current_state.counter <= start_time) { //TODO parameterize //done
@@ -229,27 +226,40 @@ public:
                 break;
             }
             case vp_SOURCE:{
+                int num_neighbors = 0;
+                int num_particles = 0;
+
+                if(new_state.neighbor_portion > 0) {
+                    new_state.neighbor_portion = 0;
+                }
+
                 for(auto neighbors: state.neighbors_state) {
-                    /*
                     if( neighbors.second.num_particles < 0){
                         assert(false && "vp_cell num_particles cannot be negative");
                     }   
-                    */
-                }
-                if(new_state.breathing_counter % breathing_rate == 1) {
-                    new_state.num_particles = 0;
-                    if(new_state.remainder % 9 == 0) {
-                        new_state.remainder = 0;
+                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
+                        num_particles += neighbors.second.neighbor_portion;
+                        num_neighbors++;
                     }
                 }
-				//The num_particles increases every time an occupant breathes (the default breathing rate is every five seconds)
-				if( (new_state.breathing_counter % breathing_rate) == 0){
-                    int remainder = num_particles_increase % 9;
-					new_state.num_particles += (num_particles_increase - remainder);
-                    new_state.remainder += remainder;
+                
+                new_state.num_particles = new_state.neighbor_portion + (new_state.num_particles % num_neighbors);
+                new_state.num_particles += num_particles;
+
+                if((new_state.breathing_counter % breathing_rate) != 0 && num_neighbors == 4 || num_neighbors == 6 || num_neighbors == 9) {
+                    new_state.neighbor_portion = new_state.num_particles - (new_state.num_particles % num_neighbors);
+                } 
+                if( (new_state.breathing_counter % breathing_rate) == 0){
+					new_state.num_particles += num_particles_increase;
+                    new_state.neighbor_portion = num_particles_increase - (num_particles_increase % num_neighbors);
 				}
-				new_state.breathing_counter++;
+                new_state.breathing_counter++;
                 new_state.counter += 1;
+
+                if(new_state.neighbor_portion % num_neighbors == 0) {
+                    new_state.neighbor_portion = new_state.num_particles/num_neighbors;
+                }
+				//The num_particles increases every time an occupant breathes (the default breathing rate is every five seconds)
                 break;
             }
             default:{
