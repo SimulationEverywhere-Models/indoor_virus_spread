@@ -22,6 +22,8 @@
                 "breathing_rate": 20,
                 "time_active": 500,
                 "start_time": 20,
+                "infection_time": 100,
+                "infection_threshold": 5,
                 "max_distance": 100
             }
         },
@@ -1041,7 +1043,7 @@
             ],
             "state": {
                 "concentration": 0,
-                "type": -300,
+                "type": -600,
                 "counter": -1
             }
         },
@@ -1052,7 +1054,7 @@
             ],
             "state": {
                 "concentration": 0,
-                "type": -300,
+                "type": -600,
                 "counter": -1
             }
         },

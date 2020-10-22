@@ -32,6 +32,7 @@
 #define CADMIUM_CELLDEVS_vp_CELL_HPP
 
 #include <cmath>
+#include <stdlib.h>
 #include <nlohmann/json.hpp>
 #include <cadmium/celldevs/cell/grid_cell.hpp>
 
@@ -42,39 +43,44 @@ using namespace std;
 /************************************/
 /******COMPLEX STATE STRUCTURE*******/
 /************************************/
-enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400, WINDOW=-500, VENTILATION=-600, TABLE=-700, vp_RECEIVER=-800};
-
-struct vp {
-    int distance_travelled;
-    bool idle; 
-    vp() : distance_travelled(0), idle(false) {}
-};
+enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400, TABLE=-500, VENTILATION=-600, CHAIR=-700, vp_RECEIVER=-800};
 
 struct vp_cell {
     int counter;
+    bool edge;
     CELL_TYPE type;
-    vector<pair<vp, vector<int>>> particles;
+    CELL_TYPE prev_type;
     int breathing_counter;
-    int num_particles_cell;
+    int prev_num_particles;
+    int num_particles;
+    int neighbor_portion;
+    int remainder;
+    int flow_portion;
+    int infection_threshold;
+    int prev_inhaled_particles;
+    int inhaled_particles;
+    vector<int> direction;
+    int time_stayed;
 
-    vp_cell() : counter(-1), type(AIR), breathing_counter(5), num_particles_cell(0) {}  // a default constructor is required
-    vp_cell(int i_counter, CELL_TYPE i_type, int i_breathing_counter, vector<pair<vp, vector<int>>> i_particles, int i_num_particles_cell) : counter(i_counter), type(i_type), breathing_counter(i_breathing_counter), particles(i_particles), num_particles_cell(i_num_particles_cell) {}
+    vp_cell() : counter(-1), edge(false), prev_type(AIR), type(AIR), breathing_counter(20), prev_num_particles(0), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), prev_inhaled_particles(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
+    vp_cell(int i_counter, CELL_TYPE i_type, int i_breathing_counter, int i_num_particles) : counter(i_counter), type(i_type), breathing_counter(i_breathing_counter), num_particles(i_num_particles) {}
     
 };
 
 // Required for comparing states and detect any change
 inline bool operator != (const vp_cell &x, const vp_cell &y) {
 	//note that breathing_counter is not included here intentionally as it is onlu used to add the breathing factor
-    return (x.counter != y.counter || x.num_particles_cell != y.num_particles_cell || x.type != y.type);
+    return (x.counter != y.counter || x.num_particles != y.num_particles || x.direction != y.direction || x.type != y.type || x.inhaled_particles != y.inhaled_particles);
 }
 
 // Required if you want to use transport delay (priority queue has to sort messages somehow)
-inline bool operator < (const vp_cell& lhs, const vp_cell& rhs){ return true; }
+inline bool operator < (const vp_cell& lhs, const vp_cell& rhs) { return true; }
 
 // Required for printing the state of the cell
 std::ostream &operator << (std::ostream &os, const vp_cell &x) {
 	//note that breathing_counter is not included here as it is not useful for visualization and it will only slow the simulation to include it. Keep it this way unless needed for another reason
-    os << "<" << x.counter << "," << x.num_particles_cell << "," << x.type << ">";
+    //os << "<" << x.counter << "," << x.num_particles << "," << x.type << ">";
+    os << "<" << x.counter << "," << x.prev_inhaled_particles << "," << x.inhaled_particles << "," << x.prev_num_particles << "," << x.num_particles << "," << x.prev_type << "," << x.type << ">";
     return os;
 }
 
@@ -96,14 +102,14 @@ struct source {
 	int breathing_rate;
 	int time_active; //amount of time in states spent at TABLE
 	int start_time; //start state for TABLE occupation
-    int num_bags; //number of bags per cell to be filled with particles 
-    int max_distance;
-    cell_position pos;
+    int infection_time;
+    int infection_threshold;
+    float flow_weight;
 
     // Each cell is 25cm x 25cm x 25cm = 15.626 Liters of air each
     // vp sources have their num_particles continually increased by default by 12.16 ppm every 5 seconds.
-    source(): vp_production(11), cell_size(25), base(0), resp_time(1), breathing_rate(20), time_active(100), start_time(20), pos({11,3}), num_bags(9) {}
-    source(float ci, float cs, int b, int wc, int vc, int r, int br, int ta, int st, int ns, int nb, int md): vp_production(ci), cell_size(cs), base(b), resp_time(r), breathing_rate(br), time_active(ta), start_time(st), num_bags(nb), max_distance(md) {}
+    source(): vp_production(11), cell_size(25), base(0), resp_time(1), breathing_rate(20), time_active(100), start_time(20), infection_time(100), infection_threshold(10), flow_weight(0.8) {}
+    source(float ci, float cs, int b, int wc, int vc, int r, int br, int ta, int st, int ns, int nb, int md, int it, vector<int> fd, float fw): vp_production(ci), cell_size(cs), base(b), resp_time(r), breathing_rate(br), time_active(ta), start_time(st), infection_threshold(it), flow_weight(fw) {}
 };
 void from_json(const json& j, source &s) {
     j.at("vp_production").get_to(s.vp_production);
@@ -112,8 +118,9 @@ void from_json(const json& j, source &s) {
     j.at("breathing_rate").get_to(s.breathing_rate);
 	j.at("time_active").get_to(s.time_active);
 	j.at("start_time").get_to(s.start_time);
-    j.at("num_bags").get_to(s.num_bags);
-    j.at("max_distance").get_to(s.max_distance);
+    j.at("infection_threshold").get_to(s.infection_threshold);
+    j.at("flow_weight").get_to(s.flow_weight);
+
 }
 
 template <typename T>
@@ -125,13 +132,15 @@ public:
     using grid_cell<T, vp_cell, int>::neighbors;
 
     using config_type = source;  // IMPORTANT FOR THE JSON   
-    float num_particles_increase; //// vp sources have their num_particles continually increased
+    int num_particles_increase; //// vp sources have their num_particles continually increased
     int base; //vp base level 
     int resp_time; //Time used to calculate the num_particles inscrease /// set in JSON
 	int breathing_rate; ///the interval between two consecutive breaths in seconds.//set intially from the JSON
 	int time_active; ///time spent by the person at the TABLE ///set in JSON
 	int start_time; ///start time for TABLE occupation ///set in JSON
-    int num_bags;
+    int infection_time;
+    int infection_threshold;
+    float flow_weight;
     int max_distance;
     cell_position pos;
 
@@ -148,134 +157,241 @@ public:
 				breathing_rate = config.breathing_rate;
 				time_active = config.time_active;
 				start_time = config.start_time;
-                num_bags = config.num_bags;
+                infection_time = config.infection_time;
+                infection_threshold = config.infection_threshold;
+                flow_weight = config.flow_weight;
                 pos = cell_id;
-                max_distance = config.max_distance;
 
     }
 
-    vp_cell local_computation() const override {
-        //vp new_state = state.current_state;
+   vp_cell local_computation() const override {
         vp_cell new_state = state.current_state;
-        switch(new_state.type){
+        switch(new_state.type) {
             case IMPERMEABLE_STRUCTURE: 
+                new_state.num_particles = 0;
+                new_state.prev_type = IMPERMEABLE_STRUCTURE;
                 break;
-            case DOOR:  
-                break;
-            case WINDOW:
-                break;
-            case VENTILATION:
-                break;
-            case AIR:{
-                for(auto neighbors: state.neighbors_state) {
-                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
-                        if( neighbors.second.num_particles_cell < 0){
-                            assert(false && "number of cells cannot be negative");
-                        }
-                        if(neighbors.second.particles.size() > 0) {
-                            pair<vp, vector<int>> new_particle;
-                            new_particle.second = pos;
-                            for(vector<pair<vp, vector<int>>>::iterator it = neighbors.second.particles.begin(); it!=neighbors.second.particles.end() ;it++) {
-                                if(it->second == pos) {
-                                    new_particle.first.distance_travelled += 25;
-                                    new_state.num_particles_cell = new_state.particles.size();
-                                    new_state.particles.push_back(new_particle);
-                                    neighbors.second.particles.erase(it);
-                                }
-                            }
-                        }
-                    }
-                }
-                break;  
-            }       
-            case TABLE:{
-                /*
-                int num_particles = 0;
+            case TABLE: {
+                new_state.prev_type = TABLE;
                 int num_neighbors = 0;
-                for(auto neighbors: state.neighbors_state) {
-                    if( neighbors.second.num_particles < 0){
-                        assert(false && "vp num_particles cannot be negative");
-                    }
-                    if(neighbors.second.type != IMPERMEABLE_STRUCTURE){
-                        num_particles += neighbors.second.num_particles;
-                        num_neighbors +=1;
-                    }
-                }
-                new_state.num_particles = num_particles/num_neighbors;
-                */
-                
-                if (state.current_state.counter <= start_time) { //TODO parameterize //done
-                    new_state.counter += 1;
-                }
+                int num_particles = 0;
 
-                if (state.current_state.counter == start_time){
-                    vector<int> temp = {11,3};
-                    if(pos == temp) {
-                        cout << "pos == source" << endl;
-                        new_state.type = vp_SOURCE;
+                for(auto neighbors: state.neighbors_state) {
+                    setDirection(new_state, neighbors);
+                    loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
+                }
+                computeParticles(new_state, num_neighbors, num_particles);
+                break;
+            }
+            case VENTILATION:{
+                new_state.num_particles = 0;
+                new_state.prev_type = VENTILATION;
+                for(auto neighbors: state.neighbors_state) {
+                    /*
+                    if( neighbors.second.num_particles < 0){
+                        assert(false && "vp_cell num_particles cannot be negative");
+                    } 
+                    */
+                    setDirection(new_state, neighbors);
+                }
+                break;
+            }
+            case AIR:{
+                /*
+                if((pos.at(1) >= 16 && pos.at(1) <= 22) || (pos.at(1) >= 45 && pos.at(1) <= 51)) {
+                    cout << new_state.direction << pos << endl;
+                }
+                */
+                new_state.prev_type = AIR;
+                int num_neighbors = 0;
+                int num_particles = 0;
+
+                for(auto neighbors: state.neighbors_state) {
+                    setDirection(new_state, neighbors);
+                    loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
+                }
+                computeParticles(new_state, num_neighbors, num_particles);
+                break;
+            }
+            case CHAIR:{  
+                new_state.prev_type = CHAIR;
+                int num_neighbors = 0;
+                int num_particles = 0;
+
+                for(auto neighbors: state.neighbors_state) {
+                    setDirection(new_state, neighbors);
+                    loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
+                }
+                computeParticles(new_state, num_neighbors, num_particles);
+
+                if (new_state.counter == start_time){
+                    vector<int> temp = {16,18};
+                    vector<int> temp2 = {22,47};
+                    if(pos == temp || pos == temp2) {
+                        new_state.type = vp_SOURCE; 
                         new_state.breathing_counter = 0;
                     }
-
+                    else {
+                        int random = rand() % 5 + 1;
+                        if(random == 3) {
+                            int stayed = rand() % 3600 + 900;
+                            new_state.type = vp_RECEIVER;
+                            new_state.breathing_counter = 0;
+                            new_state.time_stayed = stayed;
+                        }
+                    }
 				}
+                new_state.counter += 1;
+                break;
+            }
+            case vp_RECEIVER: {
+                new_state.prev_type = vp_RECEIVER;
+                int num_neighbors = 0;
+                int num_particles = 0;
+
+                if(new_state.counter >= new_state.time_stayed) {
+                    new_state.type = CHAIR;
+                }
+                if(new_state.inhaled_particles >= infection_threshold) {
+                    new_state.type = vp_SOURCE;
+                    break;
+                }
+                for(auto neighbors: state.neighbors_state) { 
+                    setDirection(new_state, neighbors);
+                    loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
+                }
+                if(new_state.breathing_counter % breathing_rate == 0){
+                    new_state.prev_inhaled_particles = new_state.inhaled_particles; 
+                    new_state.inhaled_particles += new_state.num_particles;
+                    new_state.num_particles = 0;
+                }
+                new_state.breathing_counter++;
+                new_state.counter += 1;
+
+                computeParticles(new_state, num_neighbors, num_particles);
+                
                 break;
             }
             case vp_SOURCE:{
-                int index = 0;
+                new_state.prev_type = vp_SOURCE;
+                int num_neighbors = 0;
+                int num_particles = 0;
+
                 for(auto neighbors: state.neighbors_state) {
-                    if( neighbors.second.num_particles_cell < 0){
-                        assert(false && "vp num_particles cannot be negative");
-                    }
-                    if(new_state.num_particles_cell > (new_state.counter - 1)/10) {
-                        cout << "num particles in cell: " << new_state.num_particles_cell << endl;
-                        new_state.particles[index].second = neighbors.first;
-                        new_state.num_particles_cell--;
-                        index++;
-                        cout << "next pos: " << new_state.particles[index].second << endl;
-                    }
+                    /*
+                    if( neighbors.second.num_particles < 0){
+                        assert(false && "vp_cell num_particles cannot be negative");
+                    } 
+                    */
+                    setDirection(new_state, neighbors);
+                    loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                 }
-				//The num_particles increases every time an occupant breathes (the default breathing rate is every five seconds)
-				if( (new_state.breathing_counter % breathing_rate) == 0) {
-                    cout << "Counter: " << new_state.counter << endl;
-                    populateParticles(new_state);
-				}
-				new_state.breathing_counter++;
-                new_state.counter++;
+                if(new_state.breathing_counter % breathing_rate == 0){
+                    num_particles += num_particles_increase;
+                }
+                new_state.breathing_counter++;
+                new_state.counter += 1;
+
+                computeParticles(new_state, num_neighbors, num_particles);
+    
                 break;
             }
             default:{
-                break;
-                //assert(false && "should never happen");
+                assert(false && "should never happen");
             }
         }
         return new_state;
     }
 
-    void populateParticles(vp_cell& cell) const {
-        for (int i = 0; i < num_particles_increase; i++) {
-            vp particle;
-            vector<int> cell_id;
-            pair<vp, vector<int>> new_particle;
-            new_particle = make_pair(particle, cell_id);
-            cell.particles.push_back(new_particle);
+    void computeParticles(vp_cell& curr, int const& num_neighbors, int const& num_particles) const {
+        curr.neighbor_portion = 0;
+        vector<int> temp = {0,0};
+        if(curr.direction != temp && !curr.edge) {
+            curr.prev_num_particles = curr.num_particles;
+            curr.num_particles = curr.remainder;
+            curr.num_particles += num_particles;
+
+            int flow = (curr.num_particles - curr.remainder) * flow_weight;
+            curr.flow_portion = flow;
+            curr.remainder += (curr.num_particles - flow - curr.remainder);
+
+            if(curr.remainder % num_neighbors >= 0 && curr.remainder >= num_neighbors) {
+                curr.neighbor_portion = curr.remainder/num_neighbors;
+                curr.remainder = curr.remainder % num_neighbors;
+            } 
+        }   
+        else {
+            curr.prev_num_particles = curr.num_particles;
+            curr.num_particles = curr.neighbor_portion + (curr.num_particles % num_neighbors);
+            curr.num_particles += num_particles;
+
+            if(curr.num_particles % num_neighbors >= 0 && curr.num_particles >= num_neighbors) {
+                curr.neighbor_portion = curr.num_particles/num_neighbors;
+                //curr.remainder = curr.num_particles % num_neighbors;
+            } 
+        }  
+    }
+    void setDirection(vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
+        vector<int> N = {0,-1};
+        vector<int> E = {1,0};
+        vector<int> S = {0,1};
+        vector<int> W = {-1,0};
+        vector<int> Z = {0,0};
+        if(curr.type == VENTILATION && nb.second.type == IMPERMEABLE_STRUCTURE) {
+            if(curr.direction != Z) {
+                return;
+            }
+            else if(this->map.relative(nb.first) == N) {
+                curr.direction = S;
+            }
+            else if(this->map.relative(nb.first) == E) {
+                curr.direction = W;
+            }
+            else if(this->map.relative(nb.first) == S) {
+                curr.direction = N;
+            }
+            else if(this->map.relative(nb.first) == S) {
+                curr.direction = E;
+            }
         }
-        cell.num_particles_cell += num_particles_increase;
-        //printCellData(cell);
+        else {
+            if(curr.direction != Z) {
+                return;
+            }
+            else if(this->map.relative(nb.first) == N && nb.second.direction == S) {
+                curr.direction = S;
+            }
+            else if(this->map.relative(nb.first) == E && nb.second.direction == W) {
+                curr.direction = W;
+            }
+            else if(this->map.relative(nb.first) == S && nb.second.direction == N) {
+                curr.direction = N;
+            }
+            else if(this->map.relative(nb.first) == W && nb.second.direction == E) {
+                curr.direction = E;
+            }
+        }
     }
 
-    void printParticleData(vp& particle) const {
-        cout << "Distance travelled: " << particle.distance_travelled << endl;
-        cout << "Idle: " << particle.idle << endl;
+    void loopNeighbors(int& num_neighbors, int& num_particles, vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
+        if(nb.second.type != IMPERMEABLE_STRUCTURE){
+            vector<int> temp = {0,0};
+            vector<int> sum = {NULL, NULL};
+            transform(curr.direction.begin(), curr.direction.end(), this->map.relative(nb.first).begin(), sum.begin(), plus<int>());
+            if(curr.direction != temp && sum == temp) {
+                num_particles += nb.second.flow_portion;
+            }
+            else {
+                num_particles += nb.second.neighbor_portion;
+            }
+            num_neighbors++;
+        }
+        else {
+            curr.edge = true;
+        }
+        return;
     }
 
-    void printCellData(vp_cell& cell) const {
-        cout << "Type: " << cell.type << endl;
-        cout << "Particles in cell: " << pos << endl;
-        for(int i = 0; i < cell.particles.size(); i++) {
-            cout << "Particle[" << i + 1 << "]:" << endl;
-            printParticleData(cell.particles[i]);
-        }
-    }
-    
     // It returns the delay to communicate cell's new state.
     T output_delay(vp_cell const &cell_state) const override {
 		return resp_time;
