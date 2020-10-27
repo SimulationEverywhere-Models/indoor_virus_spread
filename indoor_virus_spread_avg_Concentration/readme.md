@@ -1,1 +1,1 @@
-This model calculate average concentartion for viral particles spread
+This model calculate average concentration for viral particles spread
