@@ -1,3 +1,0 @@
-# Viral particle spread indoors
-
-
