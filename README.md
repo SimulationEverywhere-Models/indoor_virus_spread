@@ -5,3 +5,6 @@
 
 # indoor_spread_2D
 - Indoor virus spread with ventillation 
+
+# scripts 
+- Scripts for converting scenarios to JSON and charting data
