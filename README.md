@@ -5,9 +5,7 @@ Simulates viral particle movement and infection rates in enclosed environment.
 
 ##### Table of Contents  
 [scripts](#scripts)  
-[Emphasis](#emphasis)  
-...snip...    
-<a name="scripts"/>
+
 ## Headers
 
 ## Installation
@@ -18,6 +16,28 @@ Simulates viral particle movement and infection rates in enclosed environment.
 
 # indoor_spread_2D
 - Indoor virus spread with ventillation 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # scripts 
 - Scripts for converting scenarios to JSON and charting data
