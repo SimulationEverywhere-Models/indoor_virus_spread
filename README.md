@@ -4,40 +4,17 @@
 Simulates viral particle movement and infection rates in enclosed environment.
 
 ## Table of Contents  
-[Description](#description)  
-
-## Headers
+- [Installation](#installation)  
+- [Models](#models)
+- [Scripts](#scripts)
 
 ## Installation
-1. Make sure you have cadmium installed by following the user manual at 
+1. Make sure you have cadmium installed, see the [User Manual](http://www.sce.carleton.ca/courses/sysc-5104/lib/exe/fetch.php?media=cadmium.pdf) for more details.
 2. 
-## indoor_spread_basic_2D
-- indoor virus spread with a uniform distribution
 
-## indoor_spread_2D
-- Indoor virus spread with ventillation 
+## Models
+- [basic 2D model](./indoor_spread_basic_2D)
+- [advanced 2D model](./indoor_spread_2D)
 
-
-
-
-
-
-
-
-
-
-
-a
-
-
-
-
-
-
-
-
-
-
-
-# scripts 
+## Scripts 
 - Scripts for converting scenarios to JSON and charting data
