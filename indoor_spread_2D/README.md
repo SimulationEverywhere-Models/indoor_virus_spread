@@ -1,4 +1,7 @@
-# Basic model
+# Advanced Model
+
+## Description
+
 
 ## Parameters
 This is the list of cell paramters that you can change from the JSON file
@@ -21,5 +24,9 @@ This is the list of cell paramters that you can change from the JSON file
 
 ## Running the model
 
+
+## Roadmap
+Make a connection between RNA/Viral titer and Quanta and implement relation in model
+- [Viral Spread with masks paper](https://msphere.asm.org/content/5/5/e00637-20)
 
 
