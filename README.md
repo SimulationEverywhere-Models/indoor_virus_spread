@@ -19,4 +19,5 @@ Simulates viral particle movement and infection rates in enclosed environment.
 - [advanced 2D model](./indoor_spread_2D)
 
 ## Scripts 
-- Scripts for converting scenarios to JSON and charting data
+Scripts for converting scenarios to JSON and charting data
+- [scripts](./scripts)
