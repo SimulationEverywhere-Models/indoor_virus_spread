@@ -5,6 +5,7 @@ This is the list of cell paramters that you can change from the JSON file
 
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
+| vent                 | set to **true** for vents on and **false** for vents off                                                              |
 | breathing_production | number of particles generated from breathing                                                                 |
 | speaking_production  | number of particles generated from speaking                                                                  |
 | coughing_production  | number of particles generated from coughing                                                                  |
