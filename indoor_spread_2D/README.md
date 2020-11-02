@@ -8,21 +8,25 @@ This is the list of cell paramters that you can change from the JSON file
 
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
-| vent                 | set to **true** for vents on and **false** for vents off                                                     |
-| infected_positions   | array of positions for infected occupants, assign a position for the infected occupants by (x,y) cooridinates in the scenario |
-| healthy_positions    | array of positions for healthy occupants, assign a position for the healthy occupants by (x,y) cooridinates in the scenario. Note: The rest of the occupants will have randomized locations|
-| breathing_production | number of particles generated from breathing                                                                 |
-| speaking_production  | number of particles generated from speaking                                                                  |
-| coughing_production  | number of particles generated from coughing                                                                  |
-| breathing_rate       | rate at which the occupant breathes(in seconds)                                                              |
-| speaking_rate        | rate at which the occupant speaks(in seconds)                                                                |
-| coughing_rate        | rate at which the occupant coughs(in seconds)                                                                |
-| flow_weight          | the percentage of particles that travel  in the direction of the airflow                                     |
-| infection_threshold  | the number of particles it takes to infect an occupant                                                       |
-| mask_type            | the type of mask the receiver or spreader is wearing. Types include: NO_MASK, COTTON, SURGICAL, N95, N95_FIT |
-| cell_size            | the size of the cell(in centimeters)                                                                         |
-| resp_time            | the default response time for a cell state to update(in seconds)                                             |
-| start_time           | start time for occupants to enter building(in second)                                                        |
+| vent                 | Set to **true** for vents on and **false** for vents off                                                     |
+| infected_occupants   | Array of containing positions for infected occupants.  
+|                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
+|                      | i.e., `[[[17,17], "N95"], [[17,46], "COTTON"], ...]]`                                                        |
+| healthy_occupants    | Array containing positions for healthy occupants.  
+|                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
+|                      | i.e., `[[[5,24], "SURGICAL"], [[17,46], "NO_MASK"], ...]]`                                                        |
+| breathing_production | Number of particles generated from breathing                                                                 |
+| speaking_production  | Number of particles generated from speaking                                                                  |
+| coughing_production  | Number of particles generated from coughing                                                                  |
+| breathing_rate       | Rate at which the occupant breathes(in seconds)                                                              |
+| speaking_rate        | Rate at which the occupant speaks(in seconds)                                                                |
+| coughing_rate        | Rate at which the occupant coughs(in seconds)                                                                |
+| flow_weight          | The percentage of particles that travel  in the direction of the airflow                                     |
+| infection_threshold  | The number of particles it takes to infect an occupant                                                       |
+| mask_type            | The type of mask the receiver or spreader is wearing. Types include: NO_MASK, COTTON, SURGICAL, N95, N95_FIT |
+| cell_size            | The size of the cell(in centimeters)                                                                         |
+| resp_time            | The default response time for a cell state to update(in seconds)                                             |
+| start_time           | Start time for occupants to enter building(in second)                                                        |
 
 ## Running the model
 
