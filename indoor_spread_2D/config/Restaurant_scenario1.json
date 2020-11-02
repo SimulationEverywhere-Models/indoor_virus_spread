@@ -7,26 +7,30 @@
         "wrapped": false,
         "default_delay": "inertial",
         "default_cell_type": "vp_cell",
-        "breathing_production": 0,
-        "speaking_production": 0,
-        "coughing_production": 500,
-        "breathing_rate": 20,
-        "speaking_rate": 40,
-        "coughing_rate": 80,
-        "flow_weight": 0.8,
-        "wearing": 1,
-        "receiver": {
-            "mask_type": "NO_MASK"
-        },
-        "spreader": {
-            "mask_type": "NO_MASK"
-        },
         "default_state": {
             "counter": -1,
             "type": -100
         },
         "default_config": {
             "vp_cell": {
+                "vent": true,
+                "breathing_production": 11, 
+                "speaking_production": 0,
+                "coughing_production": 0,
+                "breathing_rate": 20,
+                "speaking_rate": 40,
+                "coughing_rate": 80,
+                "flow_weight": 0.8, 
+                "infection_threshold": 1000,
+                "wearing": 1,
+                "receiver": {
+                    "mask_type": "NO_MASK"
+                },
+                "spreader": {
+                    "mask_type": "NO_MASK"
+                },
+                "infected_positions": [[17,17], [17,46]],
+                "healthy_positions": [],
                 "cell_size": 25,
                 "resp_time": 1,
                 "time_active": 500,
@@ -175,17 +179,6 @@
         },
         {
             "cell_id": [
-                8,
-                1
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 15,
                 1
             ],
@@ -307,39 +300,6 @@
         },
         {
             "cell_id": [
-                7,
-                2
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                2
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                9,
-                2
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 3
             ],
@@ -396,7 +356,18 @@
         {
             "cell_id": [
                 10,
-                3
+                4
+            ],
+            "state": {
+                "concentration": 500,
+                "type": -700,
+                "counter": -1
+            }
+        },
+        {
+            "cell_id": [
+                8,
+                2
             ],
             "state": {
                 "concentration": 500,
@@ -418,28 +389,6 @@
         {
             "cell_id": [
                 15,
-                3
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                3
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                20,
                 3
             ],
             "state": {
@@ -483,17 +432,6 @@
         },
         {
             "cell_id": [
-                3,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 7,
                 4
             ],
@@ -527,45 +465,12 @@
         },
         {
             "cell_id": [
-                10,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                11,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 4
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -604,17 +509,6 @@
         },
         {
             "cell_id": [
-                19,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 20,
                 4
             ],
@@ -643,17 +537,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                4
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -742,17 +625,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                5
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -846,45 +718,12 @@
         },
         {
             "cell_id": [
-                1,
-                5
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                5
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                5
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 4,
-                5
+                8
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
+                "type": -500,
                 "counter": -1
             }
         },
@@ -936,6 +775,17 @@
             "cell_id": [
                 8,
                 6
+            ],
+            "state": {
+                "concentration": 500,
+                "type": -700,
+                "counter": -1
+            }
+        },
+        {
+            "cell_id": [
+                3,
+                5
             ],
             "state": {
                 "concentration": 500,
@@ -1039,28 +889,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
-                6
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                6,
-                6
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1077,17 +905,6 @@
         },
         {
             "cell_id": [
-                24,
-                6
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 7
             ],
@@ -1133,17 +950,6 @@
         {
             "cell_id": [
                 5,
-                7
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                12,
                 7
             ],
             "state": {
@@ -1275,17 +1081,6 @@
         },
         {
             "cell_id": [
-                1,
-                8
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 2,
                 8
             ],
@@ -1303,17 +1098,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                4,
-                8
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1342,17 +1126,6 @@
         {
             "cell_id": [
                 15,
-                8
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
                 8
             ],
             "state": {
@@ -1396,83 +1169,6 @@
         },
         {
             "cell_id": [
-                2,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                20,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 9
             ],
@@ -1484,34 +1180,12 @@
         },
         {
             "cell_id": [
-                9,
-                9
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 10
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                9,
-                10
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1539,17 +1213,6 @@
         },
         {
             "cell_id": [
-                2,
-                10
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 11
             ],
@@ -1561,12 +1224,12 @@
         },
         {
             "cell_id": [
-                2,
-                11
+                3,
+                9
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
+                "type": -700,
                 "counter": -1
             }
         },
@@ -1622,50 +1285,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                11
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                11
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                11
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                23,
-                11
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1748,34 +1367,12 @@
         },
         {
             "cell_id": [
-                22,
-                12
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 23,
                 12
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                12
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1820,17 +1417,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
-                12
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -1941,28 +1527,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                6,
-                13
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                13
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -2100,17 +1664,6 @@
         },
         {
             "cell_id": [
-                24,
-                14
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 14
             ],
@@ -2177,28 +1730,6 @@
         },
         {
             "cell_id": [
-                17,
-                14
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                14
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 15
             ],
@@ -2331,34 +1862,12 @@
         },
         {
             "cell_id": [
-                2,
-                15
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 16
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                16
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -2458,17 +1967,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                12,
-                16
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -2595,39 +2093,6 @@
         },
         {
             "cell_id": [
-                2,
-                17
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                22,
-                17
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                17
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 18
             ],
@@ -2666,17 +2131,6 @@
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                18
-            ],
-            "state": {
-                "concentration": 500,
                 "type": -700,
                 "counter": -1
             }
@@ -2711,28 +2165,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                18
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                1,
-                18
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -2777,17 +2209,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                19
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -2848,17 +2269,6 @@
         },
         {
             "cell_id": [
-                6,
-                19
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 20
             ],
@@ -2898,17 +2308,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
-                20
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -2952,17 +2351,6 @@
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                11,
-                20
-            ],
-            "state": {
-                "concentration": 500,
                 "type": -700,
                 "counter": -1
             }
@@ -2997,28 +2385,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                1,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
                 "counter": -1
             }
         },
@@ -3029,18 +2395,7 @@
             ],
             "state": {
                 "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                4,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
+                "type": -700,
                 "counter": -1
             }
         },
@@ -3090,78 +2445,12 @@
         },
         {
             "cell_id": [
-                13,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                21
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 22
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3178,17 +2467,6 @@
         },
         {
             "cell_id": [
-                15,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 16,
                 22
             ],
@@ -3200,23 +2478,12 @@
         },
         {
             "cell_id": [
-                22,
+                21,
                 22
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                22,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3228,17 +2495,6 @@
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                22
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3311,7 +2567,7 @@
         {
             "cell_id": [
                 17,
-                23
+                24
             ],
             "state": {
                 "concentration": 500,
@@ -3398,45 +2654,12 @@
         },
         {
             "cell_id": [
-                24,
-                23
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                23
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 24
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                2,
-                24
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3492,28 +2715,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                19,
-                24
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                20,
-                24
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3613,17 +2814,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                10,
-                25
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3739,45 +2929,12 @@
         },
         {
             "cell_id": [
-                9,
-                25
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 20,
                 25
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                25
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
-                25
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3866,28 +3023,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                19,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                20,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -3948,28 +3083,6 @@
         },
         {
             "cell_id": [
-                6,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 9,
                 26
             ],
@@ -3987,50 +3100,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                11,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                14,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                26
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -4080,17 +3149,6 @@
         },
         {
             "cell_id": [
-                8,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 9,
                 27
             ],
@@ -4124,34 +3182,12 @@
         },
         {
             "cell_id": [
-                13,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 14,
                 27
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -4201,89 +3237,12 @@
         },
         {
             "cell_id": [
-                22,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                27
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 28
             ],
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                28
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                28
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                28
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
                 "counter": -1
             }
         },
@@ -4344,12 +3303,12 @@
         },
         {
             "cell_id": [
-                2,
-                28
+                27,
+                29
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
+                "type": -300,
                 "counter": -1
             }
         },
@@ -4366,144 +3325,56 @@
         },
         {
             "cell_id": [
-                3,
-                29
+                27,
+                30
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
+                "type": -300,
                 "counter": -1
             }
         },
         {
             "cell_id": [
-                8,
-                29
+                27,
+                30
             ],
             "state": {
                 "concentration": 500,
-                "type": -100,
+                "type": -300,
                 "counter": -1
             }
         },
         {
             "cell_id": [
-                9,
-                29
+                27,
+                31
             ],
             "state": {
                 "concentration": 500,
-                "type": -500,
+                "type": -300,
                 "counter": -1
             }
         },
         {
             "cell_id": [
-                10,
-                29
+                27,
+                31
             ],
             "state": {
                 "concentration": 500,
-                "type": -500,
+                "type": -300,
                 "counter": -1
             }
         },
         {
             "cell_id": [
                 11,
-                29
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                27,
-                29
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                10,
-                29
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                27,
-                30
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                9,
-                30
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                10,
-                30
+                26
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                27,
-                30
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                27,
-                31
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                27,
-                31
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -300,
                 "counter": -1
             }
         },
@@ -4521,39 +3392,6 @@
         {
             "cell_id": [
                 5,
-                31
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                31
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                23,
-                31
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
                 32
             ],
             "state": {
@@ -4564,40 +3402,7 @@
         },
         {
             "cell_id": [
-                7,
-                32
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 14,
-                32
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                32
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
                 32
             ],
             "state": {
@@ -4619,8 +3424,19 @@
         },
         {
             "cell_id": [
-                23,
-                32
+                10,
+                29
+            ],
+            "state": {
+                "concentration": 500,
+                "type": -700,
+                "counter": -1
+            }
+        },
+        {
+            "cell_id": [
+                8,
+                27
             ],
             "state": {
                 "concentration": 500,
@@ -4685,17 +3501,6 @@
         },
         {
             "cell_id": [
-                13,
-                32
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 4,
                 33
             ],
@@ -4746,28 +3551,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
-                33
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                33
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -4861,28 +3644,6 @@
         },
         {
             "cell_id": [
-                17,
-                33
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                33
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 4,
                 34
             ],
@@ -4911,17 +3672,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                12,
-                34
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -4977,17 +3727,6 @@
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                34
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -5071,55 +3810,11 @@
         {
             "cell_id": [
                 3,
-                34
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                4,
-                34
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                3,
                 35
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                4,
-                35
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                5,
-                35
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -5248,17 +3943,6 @@
             "cell_id": [
                 9,
                 35
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                36
             ],
             "state": {
                 "concentration": 500,
@@ -5411,7 +4095,7 @@
         },
         {
             "cell_id": [
-                7,
+                8,
                 37
             ],
             "state": {
@@ -5422,7 +4106,18 @@
         },
         {
             "cell_id": [
-                8,
+                10,
+                35
+            ],
+            "state": {
+                "concentration": 500,
+                "type": -500,
+                "counter": -1
+            }
+        },
+        {
+            "cell_id": [
+                10,
                 37
             ],
             "state": {
@@ -5439,28 +4134,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                10,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -5499,34 +4172,12 @@
         },
         {
             "cell_id": [
-                15,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 16,
                 37
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -5554,89 +4205,12 @@
         },
         {
             "cell_id": [
-                13,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                37
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                6,
-                38
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 7,
                 38
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                8,
-                38
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                9,
-                38
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                14,
-                38
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                38
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -5709,50 +4283,6 @@
         {
             "cell_id": [
                 7,
-                40
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
-                40
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                40
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                17,
-                40
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                7,
                 41
             ],
             "state": {
@@ -5775,17 +4305,6 @@
         {
             "cell_id": [
                 17,
-                41
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
                 41
             ],
             "state": {
@@ -5846,17 +4365,6 @@
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                23,
-                42
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -5961,17 +4469,6 @@
         },
         {
             "cell_id": [
-                13,
-                42
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 7,
                 43
             ],
@@ -5989,17 +4486,6 @@
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                43
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -6297,28 +4783,6 @@
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                12,
-                44
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                44
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -6369,39 +4833,6 @@
         {
             "cell_id": [
                 11,
-                45
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                12,
-                45
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                45
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                14,
                 45
             ],
             "state": {
@@ -6566,17 +4997,6 @@
         },
         {
             "cell_id": [
-                25,
-                45
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 46
             ],
@@ -6654,17 +5074,6 @@
         },
         {
             "cell_id": [
-                20,
-                46
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 22,
                 46
             ],
@@ -6715,17 +5124,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                46
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -6797,28 +5195,6 @@
         },
         {
             "cell_id": [
-                23,
-                47
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                15,
-                47
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 48
             ],
@@ -6852,34 +5228,12 @@
         },
         {
             "cell_id": [
-                16,
-                48
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 17,
                 48
             ],
             "state": {
                 "concentration": 500,
                 "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                48
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -7017,61 +5371,6 @@
         },
         {
             "cell_id": [
-                18,
-                49
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                21,
-                49
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                22,
-                49
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                23,
-                49
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                24,
-                49
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 50
             ],
@@ -7089,28 +5388,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                50
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                14,
-                50
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -7380,17 +5657,6 @@
         },
         {
             "cell_id": [
-                18,
-                51
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 52
             ],
@@ -7408,28 +5674,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                13,
-                52
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                14,
-                52
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -7474,17 +5718,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                19,
-                52
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -7551,17 +5784,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                9,
-                52
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -7716,28 +5938,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                16,
-                53
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                18,
-                53
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -7831,17 +6031,6 @@
         },
         {
             "cell_id": [
-                12,
-                54
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 21,
                 54
             ],
@@ -7881,17 +6070,6 @@
             "state": {
                 "concentration": 500,
                 "type": -500,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                25,
-                54
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
                 "counter": -1
             }
         },
@@ -7996,17 +6174,6 @@
         },
         {
             "cell_id": [
-                24,
-                55
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -700,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
                 27,
                 55
             ],
@@ -8024,17 +6191,6 @@
             "state": {
                 "concentration": 500,
                 "type": -300,
-                "counter": -1
-            }
-        },
-        {
-            "cell_id": [
-                10,
-                55
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
                 "counter": -1
             }
         },
@@ -8335,17 +6491,6 @@
                 "counter": -1
             }
         },
-        {
-            "cell_id": [
-                27,
-                58
-            ],
-            "state": {
-                "concentration": 500,
-                "type": -100,
-                "counter": -1
-            }
-        },
         {"cell_id": [19, 57], "state": {"concentration": 300, "type": -600, "counter": -1}},
         {"cell_id": [15, 57], "state": {"concentration": 300, "type": -600, "counter": -1}},
         {"cell_id": [16, 57], "state": {"concentration": 300, "type": -600, "counter": -1}},
@@ -8372,7 +6517,7 @@
         {"cell_id": [12, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [13, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [14, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
-        {"cell_id": [23, 0], "state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [23, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [24, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [25, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [26, 0],"state": {"concentration": 0, "type": -300, "counter": -1}},
