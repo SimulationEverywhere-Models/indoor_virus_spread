@@ -8,7 +8,9 @@ This is the list of cell paramters that you can change from the JSON file
 
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
-| vent                 | set to **true** for vents on and **false** for vents off                                                              |
+| vent                 | set to **true** for vents on and **false** for vents off                                                     |
+| infected_positions   | array of positions for infected occupants, assign a position for the infected occupants by (x,y) cooridinates in the scenario |
+| healthy_positions    | array of positions for healthy occupants, assign a position for the healthy occupants by (x,y) cooridinates in the scenario. Note: The rest of the occupants will have randomized locations|
 | breathing_production | number of particles generated from breathing                                                                 |
 | speaking_production  | number of particles generated from speaking                                                                  |
 | coughing_production  | number of particles generated from coughing                                                                  |
