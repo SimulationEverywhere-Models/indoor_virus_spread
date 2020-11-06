@@ -9,10 +9,10 @@ This is the list of cell paramters that you can change from the JSON file
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
 | vent                 | Set to **true** for vents on and **false** for vents off                                                     |
-| infected_occupants   | Array containing positions for infected occupants.  
+| infected_occupants   | Array containing positions for infected occupants with their respective mask type
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
 |                      | i.e., `[[[17,17], "N95"], [[17,46], "COTTON"], ...]]`                                                        |
-| healthy_occupants    | Array containing positions for healthy occupants.  
+| healthy_occupants    | Array containing positions for healthy occupants with their respective mask type
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
 |                      | i.e., `[[[5,24], "SURGICAL"], [[17,46], "NO_MASK"], ...]]`                                                   |
 | breathing_production | Number of particles generated from breathing                                                                 |
