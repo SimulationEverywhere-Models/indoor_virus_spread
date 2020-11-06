@@ -14,7 +14,7 @@ This is the list of cell paramters that you can change from the JSON file
 |                      | i.e., `[[[17,17], "N95"], [[17,46], "COTTON"], ...]]`                                                        |
 | healthy_occupants    | Array containing positions for healthy occupants.  
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
-|                      | i.e., `[[[5,24], "SURGICAL"], [[17,46], "NO_MASK"], ...]]`                                                        |
+|                      | i.e., `[[[5,24], "SURGICAL"], [[17,46], "NO_MASK"], ...]]`                                                   |
 | breathing_production | Number of particles generated from breathing                                                                 |
 | speaking_production  | Number of particles generated from speaking                                                                  |
 | coughing_production  | Number of particles generated from coughing                                                                  |
@@ -27,6 +27,7 @@ This is the list of cell paramters that you can change from the JSON file
 | cell_size            | The size of the cell(in centimeters)                                                                         |
 | resp_time            | The default response time for a cell state to update(in seconds)                                             |
 | start_time           | Start time for occupants to enter building(in second)                                                        |
+| masks           | Different mask types with their shedding rate(percentage of particles exhaled) and efficiency(percentage of particles that are blocked from being inhaled)                                                       |
 
 ## Running the model
 
