@@ -23,7 +23,7 @@ This is the list of cell paramters that you can change from the JSON file
 | coughing_rate        | Rate at which the occupant coughs(in seconds)                                                                |
 | flow_weight          | The percentage of particles that travel  in the direction of the airflow                                     |
 | infection_threshold  | The number of particles it takes to infect an occupant                                                       |
-| mask_type            | The type of mask the receiver or spreader is wearing. Types include: NO_MASK, COTTON, SURGICAL, N95, N95_FIT |
+| mask_type            | The type of mask the receiver or spreader is wearing by default. Types include: NO_MASK, COTTON, SURGICAL, N95, N95_FIT |
 | cell_size            | The size of the cell(in centimeters)                                                                         |
 | resp_time            | The default response time for a cell state to update(in seconds)                                             |
 | start_time           | Start time for occupants to enter building(in second)                                                        |
