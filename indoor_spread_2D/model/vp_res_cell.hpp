@@ -65,7 +65,7 @@ struct vp_cell {
 
 
     vp_cell() : counter(-1), edge(false), prev_type(AIR), mask("NO_MASK"), type(AIR), prev_num_particles(0), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), prev_inhaled_particles(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
-    vp_cell(int i_counter, CELL_TYPE i_type) : counter(i_counter), type(i_type) {}
+    vp_cell(int i_counter, CELL_TYPE i_type, int i_inhaled) : counter(i_counter), type(i_type), inhaled_particles(i_inhaled){}
     
 };
 
@@ -81,13 +81,14 @@ inline bool operator < (const vp_cell& lhs, const vp_cell& rhs) { return true; }
 // Required for printing the state of the cell
 std::ostream &operator << (std::ostream &os, const vp_cell &x) {
 	//note that breathing_counter is not included here as it is not useful for visualization and it will only slow the simulation to include it. Keep it this way unless needed for another reason
-    os << "<" << x.counter << "," << x.num_particles << "," << x.type << ">";
+    os << "<" << x.inhaled_particles << "," << x.num_particles << "," << x.type << ">";
     //os << "<" << x.counter << "," << x.prev_inhaled_particles << "," << x.inhaled_particles << "," << x.prev_num_particles << "," << x.num_particles << "," << x.prev_type << "," << x.type << ">";
     return os;
 }
 
 // Required for creating vp_cell objects from JSON file
 void from_json(const json& j, vp_cell &s) {
+    //j.at("inhaled").get_to(s.inhaled_particles);
     j.at("counter").get_to(s.counter);
     j.at("type").get_to(s.type);
 }
@@ -126,9 +127,6 @@ struct conf {
     float n95_fit_shed;
     float n95_fit_efficiency;
     
-
-    // Each cell is 25cm x 25cm x 25cm = 15.626 Liters of air each
-    // vp sources have their num_particles continually increased by default by 12.16 ppm every 5 seconds.
     conf(): spreader_mask("NO_MASK"), receiver_mask("NO_MASK"), vent(true), breathing_production(11), speaking_production(22), coughing_production(33), cell_size(25), resp_time(1), breathing_rate(3), start_time(20), infection_threshold(10), flow_weight(1) {}
     conf(string sm, string rm, vector<pair<vector<int>, string>> io, vector<pair<vector<int>, string>> ho, bool v, int bp, int sp, int cp, float cs, int b, int wc, int vc, int r, int br, int sr, int cr, int st, int ns, int nb, int md, int it, float fw, float sw, float me, float nms, float nme, float cos, float ce, float ss, float se, float nns, float nne, float nnfs, float nnfe): spreader_mask(sm), receiver_mask(rm), infected_occupants(io), healthy_occupants(ho), vent(v), breathing_production(bp), speaking_production(sp), coughing_production(33), cell_size(cs), resp_time(r), breathing_rate(br), speaking_rate(sr), coughing_rate(cr), start_time(st), infection_threshold(it), flow_weight(fw), no_mask_shed(nms), no_mask_efficiency(nme), cotton_shed(cos), cotton_efficiency(ce), surgical_shed(ss), surgical_efficiency(se), n95_shed(nns), n95_efficiency(nne), n95_fit_shed(nnfs), n95_fit_efficiency(nnfe) {}
 };
@@ -243,6 +241,10 @@ public:
                 new_state.num_particles = 0;
                 new_state.prev_type = IMPERMEABLE_STRUCTURE;
                 break;
+            case DOOR: 
+                new_state.num_particles = 0;
+                new_state.prev_type = DOOR;
+                break;
             case TABLE: {
                 new_state.prev_type = TABLE;
                 int num_neighbors = 0;
@@ -285,10 +287,11 @@ public:
                         assert(false && "vp_cell num_particles cannot be negative");
                     } 
                     setDirection(new_state, neighbors);
-
                     loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                 }
                 computeParticles(new_state, num_neighbors, num_particles);
+
+                new_state.counter++;
                 break;
             }
             case CHAIR:{  
@@ -313,17 +316,17 @@ public:
                             new_state.counter = 0; 
                             break;
                         }
-                        else {
-                            int random = rand() % 5 + 1;
-                            if(random == 3) {
-                                //int stayed = rand() % 3600 + 900;
-                                new_state.type = vp_RECEIVER;
-                                new_state.mask = receiver_mask;
-                                new_state.counter = 0;
-                                //new_state.time_stayed = stayed;
-                                break;
-                            }
-                        }
+                        // else {
+                        //     int random = rand() % 5 + 1;
+                        //     if(random == 3) {
+                        //         //int stayed = rand() % 3600 + 900;
+                        //         new_state.type = vp_RECEIVER;
+                        //         new_state.mask = receiver_mask;
+                        //         new_state.counter = 0;
+                        //         //new_state.time_stayed = stayed;
+                        //         break;
+                        //     }
+                        // }
                     }
                     for(auto healthy: healthy_occupants) {
                         if(pos == healthy.first) {
@@ -332,17 +335,17 @@ public:
                             new_state.counter = 0; 
                             break;
                         }
-                        else {
-                            int random = rand() % 5 + 1;
-                            if(random == 3) {
-                                //int stayed = rand() % 3600 + 900;
-                                new_state.type = vp_RECEIVER;
-                                new_state.mask = receiver_mask;
-                                new_state.counter = 0;
-                                //new_state.time_stayed = stayed;
-                                break;
-                            }
-                        }
+                        // else {
+                        //     int random = rand() % 5 + 1;
+                        //     if(random == 3) {
+                        //         //int stayed = rand() % 3600 + 900;
+                        //         new_state.type = vp_RECEIVER;
+                        //         new_state.mask = receiver_mask;
+                        //         new_state.counter = 0;
+                        //         //new_state.time_stayed = stayed;
+                        //         break;
+                        //     }
+                        // }
                     }
 				}
                 new_state.counter++;
@@ -444,11 +447,13 @@ public:
                 curr.neighbor_portion = curr.remainder/num_neighbors;
                 curr.remainder = curr.remainder % num_neighbors;
             } 
-        }   
+        }  
+        /*
         else if(curr.direction != temp && curr.edge) {
             curr.num_particles += num_particles;
             return;
         }
+        */
         else {
             curr.prev_num_particles = curr.num_particles;
             curr.num_particles = curr.num_particles % num_neighbors;
@@ -459,50 +464,7 @@ public:
             } 
         }  
     }
-    /*
-    void setDirection(vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
-        vector<int> N = {0,-1};
-        vector<int> E = {1,0};
-        vector<int> S = {0,1};
-        vector<int> W = {-1,0};
-        vector<int> Z = {0,0};
 
-        if(curr.type == VENTILATION && nb.second.type == IMPERMEABLE_STRUCTURE) {
-            if(curr.direction != Z) {
-                return;
-            }
-            if(this->map.relative(nb.first) == N) {
-                curr.direction = S;
-            }
-            else if(this->map.relative(nb.first) == E) {
-                curr.direction = W;
-            }
-            else if(this->map.relative(nb.first) == S) {
-                curr.direction = N;
-            }
-            else if(this->map.relative(nb.first) == W) {
-                curr.direction = E;
-            }
-        }
-        else {
-            if(curr.direction != Z) {
-                return;
-            }
-            else if(this->map.relative(nb.first) == N && nb.second.direction == S) {
-                curr.direction = S;
-            }
-            else if(this->map.relative(nb.first) == E && nb.second.direction == W) {
-                curr.direction = W;
-            }
-            else if(this->map.relative(nb.first) == S && nb.second.direction == N) {
-                curr.direction = N;
-            }
-            else if(this->map.relative(nb.first) == W && nb.second.direction == E) {
-                curr.direction = E;
-            }
-        }
-    }
-    */
     void setDirection(vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
         vector<int> N = {0,-1};
         vector<int> E = {1,0};
@@ -516,7 +478,7 @@ public:
 
         //cout << this->map.shape << endl;
         transform(shape.begin(), shape.end(), currPos.begin(), diff.begin(), minus<int>());
-        if(curr.type == VENTILATION) {
+        if(curr.type == VENTILATION && nb.second.type != IMPERMEABLE_STRUCTURE) {
             if(curr.direction != Z) {
                 return;
             }
@@ -530,6 +492,23 @@ public:
                 curr.direction = N;
             }
             else if(diff.at(0) == 0) {
+                curr.direction = E;
+            }
+        }
+        else if(curr.type == VENTILATION && nb.second.type == IMPERMEABLE_STRUCTURE) {
+            if(curr.direction != Z) {
+                return;
+            }
+            if(this->map.relative(nb.first) == N) {
+                curr.direction = S;
+            }
+            else if(this->map.relative(nb.first) == E) {
+                curr.direction = W;
+            }
+            else if(this->map.relative(nb.first) == S) {
+                curr.direction = N;
+            }
+            else if(this->map.relative(nb.first) == W) {
                 curr.direction = E;
             }
         }

@@ -11,36 +11,132 @@
         "counter": -1,
         "type": -100
     },
-    "default_config": {
-      "vp_cell": {
-          "vent": true,
-          "breathing_production": 11, 
-          "speaking_production": 0,
-          "coughing_production": 0,
-          "breathing_rate": 20,
-          "speaking_rate": 40,
-          "coughing_rate": 80,
-          "flow_weight": 0.8, 
-          "infection_threshold": 1000,
-          "wearing": 1,
-          "receiver": {
-              "mask_type": "NO_MASK"
-          },
-          "spreader": {
-              "mask_type": "NO_MASK"
-          },
-          "cell_size": 25,
-          "resp_time": 1,
-          "time_active": 500,
-          "start_time": 20
-      }
-  },
     "neighborhood": [
         {
             "type": "moore",
             "range": 1
         }
-    ]
+    ],
+    "default_config": {
+        "vp_cell": {
+            "vent": true,
+            "breathing_production": 11,
+            "speaking_production": 0,
+            "coughing_production": 0,
+            "breathing_rate": 20,
+            "speaking_rate": 3,
+            "coughing_rate": 3,
+            "flow_weight": 0.8,
+            "infection_threshold": 50,
+            "receiver": {
+                "mask_type": "NO_MASK"
+            },
+            "spreader": {
+                "mask_type": "NO_MASK"
+            },
+            "infected_occupants": [
+              [
+                  [
+                      15,
+                      48
+                  ],
+                  "NO_MASK"
+              ]
+          ],
+          "healthy_occupants": [
+              [
+                  [
+                      24,
+                      50
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      23,
+                      55
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      14,
+                      49
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      14,
+                      51
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      19,
+                      49
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      19,
+                      51
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      10,
+                      52
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      12,
+                      54
+                  ],
+                  "NO_MASK"
+              ],
+              [
+                  [
+                      10,
+                      56
+                  ],
+                  "NO_MASK"
+              ]
+            ],
+            "cell_size": 25,
+            "occupant_distance": 50,
+            "resp_time": 1,
+            "time_active": 500,
+            "start_time": 0,
+            "masks": {
+                "NO_MASK": {
+                    "shed": 1,
+                    "efficiency": 0
+                },
+                "COTTON": {
+                    "shed": 0.24,
+                    "efficiency": 0.27
+                },
+                "SURGICAL": {
+                    "shed": 0.27,
+                    "efficiency": 0.47
+                },
+                "N95": {
+                    "shed": 0.05,
+                    "efficiency": 0.57
+                },
+                "N95_FIT": {
+                    "shed": 0,
+                    "efficiency": 0.79
+                }
+            }
+        }
+    }
 },
   "cells": [
     {
@@ -6571,6 +6667,13 @@
     {"cell_id": [21,46],"state": {"concentration": 500, "type": -500, "counter": -1}},
     {"cell_id": [23,58],"state": {"concentration": 0, "type": -300, "counter": -1}},
     {"cell_id": [7,57],"state": {"concentration": 0, "type": -300, "counter": -1}},
-    {"cell_id": [27,57],"state": {"concentration": 0, "type": -300, "counter": -1}}
+    {"cell_id": [27,57],"state": {"concentration": 0, "type": -300, "counter": -1}},
+      {"cell_id": [0,35],"state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [1,36],"state": {"concentration": 0, "type": -300, "counter": -1}},
+          {"cell_id": [2,37],"state": {"concentration": 0, "type": -300, "counter": -1}},
+            {"cell_id": [3,38],"state": {"concentration": 0, "type": -300, "counter": -1}},
+              {"cell_id": [4,39],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [5,40],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                  {"cell_id": [6,41],"state": {"concentration": 0, "type": -300, "counter": -1}}
   ]
 }
