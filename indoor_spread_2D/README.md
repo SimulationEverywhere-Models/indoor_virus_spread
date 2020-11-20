@@ -30,7 +30,26 @@ This is the list of cell paramters that you can change from the JSON file
 | masks           | Different mask types with their shedding rate(percentage of particles exhaled) and efficiency(percentage of particles that are blocked from being inhaled)                                                       |
 
 ## Running the model
+You will need cmake to compile the program,
 
+Linux installation:
+- In your command prompt do `sudo apt install cmake`
+
+Windows installation:
+- Go to https://cmake.org/download/ and install the **Windows win64-x64 Installer**
+- Run the installer and follow the instructions
+
+Compiling and running the model:
+- before compiling, in **CADMIUM/Cell-DEVS-Cadmium-Simulation-Environment/Cadmium-Cell-DEVS-Models/indoor_virus_spread/indoor_spread_2D** create a new folder called results, this is where all the simulation results will be stored
+- Navigate to **CADMIUM/Cell-DEVS-Cadmium-Simulation-Environment/Cadmium-Cell-DEVS-Models/indoor_virus_spread/indoor_spread_2D** where CMakeLists is located and in your terminal run `cmake ./`
+- A new Makefile will be created in your directory, in the terminal again run `make`
+- A new executable file will be created in the same folder, it's caled vp (Linux) / vp.exe (Windows)
+- To run a simulation, in your terminal run 
+  - (Linux) `./vp ./config/<the scenario name>.json <number of timesteps to run simulation>`
+    - i.e., `./vp ./config/Restaurant-scenario1.json 500`
+  - (Windows) `./vp.exe ./config/<the scenario name>.json <number of timesteps to run simulation>`
+    - i.e., `./vp.exe ./config/Restaurant-scenario1.json 500`
+- The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
 
 ## Roadmap
 Make a connection between RNA/Viral titer and Quanta and implement relation in model
