@@ -1,10 +1,8 @@
-results/*
-bin/*
-CMakeFiles/*
-model/results/*
-model/vp
+CMakeFiles
+results
+vp
 
 cmake_install.*
 CMakeCache.*
 CTestTestfile.*
-Makefile.*
+Makefile*

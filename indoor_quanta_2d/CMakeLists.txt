@@ -8,12 +8,12 @@ add_compile_options(-g)
 
 enable_testing()
 
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/bin/results)
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory results)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/results)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../cadmium/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../cadmium/json/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../cadmium/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../cadmium/json/include)
 
 
 find_package(Boost COMPONENTS program_options unit_test_framework REQUIRED)

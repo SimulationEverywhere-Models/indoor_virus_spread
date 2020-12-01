@@ -7,24 +7,30 @@
         "wrapped": false,
         "default_delay": "inertial",
         "default_cell_type": "vp_cell",
+        "breathing_production": 0,
+        "speaking_production": 0,
+        "coughing_production": 500,
+        "breathing_rate": 20,
+        "speaking_rate": 40,
+        "coughing_rate": 80,
+        "flow_weight": 0.8,
+        "wearing": 1,
+        "receiver": {
+            "mask_type": "NO_MASK"
+        },
+        "spreader": {
+            "mask_type": "NO_MASK"
+        },
         "default_state": {
             "counter": -1,
-            "concentration": 0,
-            "type": -100,
-            "breathing_counter": 0
+            "type": -100
         },
         "default_config": {
             "vp_cell": {
-                "vp_production": 11,
                 "cell_size": 25,
-                "base": 0,
                 "resp_time": 1,
-                "breathing_rate": 20,
                 "time_active": 500,
-                "start_time": 20,
-                "infection_threshold": 1000,
-                "flow_dir": [-1,0],
-                "flow_weight": 0.8
+                "start_time": 20
             }
         },
         "neighborhood": [
