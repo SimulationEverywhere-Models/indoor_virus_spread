@@ -6614,6 +6614,13 @@
         {"cell_id": [21,46],"state": {"concentration": 500, "type": -500, "counter": -1}},
         {"cell_id": [23,58],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [7,57],"state": {"concentration": 0, "type": -300, "counter": -1}},
-        {"cell_id": [27,57],"state": {"concentration": 0, "type": -300, "counter": -1}}
+        {"cell_id": [27,57],"state": {"concentration": 0, "type": -300, "counter": -1}},
+            {"cell_id": [0,35],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [1,36],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [2,37],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [3,38],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [4,39],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [5,40],"state": {"concentration": 0, "type": -300, "counter": -1}},
+                {"cell_id": [6,41],"state": {"concentration": 0, "type": -300, "counter": -1}}
     ]
 }
