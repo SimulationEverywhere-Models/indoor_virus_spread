@@ -1,11 +1,8 @@
 {
     "model": "vp_model",
-    "size": [6, 3, 1],
-    "ports": [{
+    "size": [28, 59, 1],
+    "ports": [ {
             "name": "inhaled",
-            "style": 1
-        }, {
-            "name": "counter",
             "style": 0
         }, {
             "name": "VP level",
@@ -17,13 +14,17 @@
     ],
 
     "styles": [ [{
-                "start": -100,
-                "end": -1,
-                "color": [0, 0, 0]
-            }, {
                 "start": 0,
-                "end": 100000,
-                "color": [0, 0, 255]
+                "end": 1,
+                "color": [255, 255, 255]
+            }, {
+                "start": 1,
+                "end": 2,
+                "color": [255, 232, 232]
+            }, {
+                "start": 2,
+                "end": 3,
+                "color": [255, 220, 220]
             }
         ], 
         [{
@@ -100,14 +101,14 @@
                 "color": [255, 36, 36]
             }, {
                 "start": 18,
-                "end": 540,
+                "end": 19,
                 "color": [255, 24, 24]
             }, {
-                "start": 540,
-                "end": 19,
+                "start": 19,
+                "end": 20,
                 "color": [255, 12, 12]
             }, {
-                "start": 19,
+                "start": 20,
                 "end": 100000, 
                 "color": [255, 0, 0]
             }

@@ -35,78 +35,22 @@
                 "mask_type": "NO_MASK"
             },
             "infected_occupants": [
-              [
+                [
                   [
                       15,
                       48
                   ],
                   "NO_MASK"
-              ]
-          ],
-          "healthy_occupants": [
-              [
+                ],
+                [
                   [
-                      24,
-                      50
+                      21,
+                      17
                   ],
                   "NO_MASK"
-              ],
-              [
-                  [
-                      23,
-                      55
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      14,
-                      49
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      14,
-                      51
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      19,
-                      49
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      19,
-                      51
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      10,
-                      52
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      12,
-                      54
-                  ],
-                  "NO_MASK"
-              ],
-              [
-                  [
-                      10,
-                      56
-                  ],
-                  "NO_MASK"
-              ]
+                ]
+            ],
+            "healthy_occupants": [
             ],
             "cell_size": 25,
             "occupant_distance": 50,
@@ -6670,10 +6614,10 @@
     {"cell_id": [27,57],"state": {"concentration": 0, "type": -300, "counter": -1}},
       {"cell_id": [0,35],"state": {"concentration": 0, "type": -300, "counter": -1}},
         {"cell_id": [1,36],"state": {"concentration": 0, "type": -300, "counter": -1}},
-          {"cell_id": [2,37],"state": {"concentration": 0, "type": -300, "counter": -1}},
-            {"cell_id": [3,38],"state": {"concentration": 0, "type": -300, "counter": -1}},
-              {"cell_id": [4,39],"state": {"concentration": 0, "type": -300, "counter": -1}},
-                {"cell_id": [5,40],"state": {"concentration": 0, "type": -300, "counter": -1}},
-                  {"cell_id": [6,41],"state": {"concentration": 0, "type": -300, "counter": -1}}
+        {"cell_id": [2,37],"state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [3,38],"state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [4,39],"state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [5,40],"state": {"concentration": 0, "type": -300, "counter": -1}},
+        {"cell_id": [6,41],"state": {"concentration": 0, "type": -300, "counter": -1}}
   ]
 }

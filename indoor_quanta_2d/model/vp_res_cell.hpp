@@ -50,20 +50,17 @@
         int counter;
         bool edge;
         CELL_TYPE type;
-        CELL_TYPE prev_type;
         string mask;
-        int prev_num_particles;
-        int num_particles;
+        float num_particles;
         int neighbor_portion;
         int remainder;
         int flow_portion;
         int infection_threshold;
-        int prev_inhaled_particles;
         int inhaled_particles;
         vector<int> direction;
         int time_stayed;
 
-        vp_cell() : counter(-1), edge(false), prev_type(AIR), mask("NO_MASK"), type(AIR), prev_num_particles(0), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), prev_inhaled_particles(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
+        vp_cell() : counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
         vp_cell(int i_counter, CELL_TYPE i_type, int i_inhaled) : counter(i_counter), type(i_type), inhaled_particles(i_inhaled) {}
         
     };
@@ -142,16 +139,9 @@
         j.at("infected_occupants").get_to(s.infected_occupants);
         j.at("healthy_occupants").get_to(s.healthy_occupants);
         j.at("vent").get_to(s.vent);
-        j.at("breathing_production").get_to(s.breathing_production);
-        j.at("speaking_production").get_to(s.speaking_production);
-        j.at("coughing_production").get_to(s.coughing_production);
         j.at("cell_size").get_to(s.cell_size);
         j.at("resp_time").get_to(s.resp_time);
-        j.at("breathing_rate").get_to(s.breathing_rate);
-        j.at("speaking_rate").get_to(s.speaking_rate);
-        j.at("coughing_rate").get_to(s.coughing_rate);
         j.at("start_time").get_to(s.start_time);
-        j.at("infection_threshold").get_to(s.infection_threshold);
         j.at("flow_weight").get_to(s.flow_weight);
         j.at("receiver").at("mask_type").get_to(s.receiver_mask); 
         j.at("spreader").at("mask_type").get_to(s.spreader_mask);
@@ -165,14 +155,14 @@
         j.at("masks").at("N95").at("efficiency").get_to(s.n95_efficiency);
         j.at("masks").at("N95_FIT").at("shed").get_to(s.n95_fit_shed);
         j.at("masks").at("N95_FIT").at("efficiency").get_to(s.n95_fit_efficiency);
-        // j.at("quanta_params").at("ERq_resting").get_to(s.ERq_resting);
-        // j.at("quanta_params").at("ERq_speaking").get_to(s.ERq_speaking);
-        // j.at("quanta_params").at("IR_resting").get_to(s.IR_resting);
-        // j.at("quanta_params").at("IR_speaking").get_to(s.IR_speaking);
-        // j.at("quanta_params").at("volume").get_to(s.volume);
-        // j.at("quanta_params").at("n0").get_to(s.n0);
-        // j.at("quanta_params").at("num_infectious").get_to(s.num_infectious);
-        // j.at("quanta_params").at("IVVR").get_to(s.IVVR);
+        j.at("quanta_params").at("ERq_resting").get_to(s.ERq_resting);
+        j.at("quanta_params").at("ERq_speaking").get_to(s.ERq_speaking);
+        j.at("quanta_params").at("IR_resting").get_to(s.IR_resting);
+        j.at("quanta_params").at("IR_speaking").get_to(s.IR_speaking);
+        j.at("quanta_params").at("volume").get_to(s.volume);
+        j.at("quanta_params").at("n0").get_to(s.n0);
+        j.at("quanta_params").at("num_infectious").get_to(s.num_infectious);
+        j.at("quanta_params").at("IVVR").get_to(s.IVVR);
     }
 
     template <typename T>
@@ -423,13 +413,13 @@
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
                     if(new_state.counter % breathing_rate == 0 && new_state.counter >= breathing_rate) {
-                        computeEmission(new_state, breathing_production, num_particles);
+                        computeEmission(new_state, num_particles);
                     }
                     if(new_state.counter % speaking_rate == 0 && new_state.counter >= speaking_rate) {
-                        computeEmission(new_state, speaking_production, num_particles);
+                        computeEmission(new_state, num_particles);
                     }
                     if(new_state.counter % coughing_rate == 0 && new_state.counter >= coughing_rate) {
-                        computeEmission(new_state, coughing_production, num_particles);
+                        computeEmission(new_state, num_particles);
                     }
                     new_state.counter++;
 
@@ -511,9 +501,6 @@
             //cout << this->map.shape << endl;
             transform(shape.begin(), shape.end(), currPos.begin(), diff.begin(), minus<int>());
             if(curr.type == VENTILATION && nb.second.type != IMPERMEABLE_STRUCTURE) {
-                if(curr.direction != Z) {
-                    return;
-                }
                 if(diff.at(1) == 0) {
                     curr.direction = S;
                 }
@@ -589,21 +576,24 @@
             return;
         }
 
-        void computeEmission(vp_cell& curr, int const& production, int& num_particles) const {
+        void computeEmission(vp_cell& curr, int& num_particles) const {
+            float production = concentration(curr.counter, ERq_speaking, num_infectious, IVVR, volume, n0);
+            int scale = 10000;
+            cout << production * scale << " for cell" << pos << " at timestep - " << curr.counter << endl;
             if(curr.mask == "NO_MASK") {
-                num_particles += production;
+                num_particles += (production * scale);
             }
             else if(curr.mask == "COTTON") {
-                num_particles += (production * cotton_shed);
+                num_particles += (production * cotton_shed * scale);
             }
             else if(curr.mask == "SURGICAL") {
-                num_particles += (production * surgical_shed);
+                num_particles += (production * surgical_shed * scale);
             }
             else if(curr.mask == "N95") {
-                num_particles += (production * n95_shed);
+                num_particles += (production * n95_shed * scale);
             }
             else if(curr.mask == "N95_FIT") {
-                num_particles += (production * n95_fit_shed);
+                num_particles += (production * n95_fit_shed * scale);
             }
         }
 
@@ -635,7 +625,6 @@
             time /= 3600;
             float result;
             result = ( (ERq * I) / (IVVR * V) ) + ( (n0 - ( (ERq * I) / IVVR) ) * (pow(M_E, - (IVVR * time) ) / V) );
-
             return result;
         }
 
