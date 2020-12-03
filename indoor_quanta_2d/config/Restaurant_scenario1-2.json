@@ -22,15 +22,17 @@
                 "quanta_params": {
                     "ERq_resting": 0.63,
                     "ERq_speaking": 4.9,
-                    "IR_resting": 0.54,
-                    "IR_speaking": 1.38, 
+                    "IR_resting": 3,
+                    "IR_speaking": 3, 
                     "volume": 45,
                     "n0": 0,
                     "num_infectious": 2,
+                    "num_healthy": 11,
                     "IVVR": 1.54
                 },
                 "vent": false,
                 "flow_weight": 0.8,
+                "infection_threshold": 1000,
                 "receiver": {
                     "mask_type": "NO_MASK"
                 },
@@ -54,6 +56,62 @@
                     ]
                 ],
                 "healthy_occupants": [
+                    [
+                        [
+                            14,
+                            49
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            15,
+                            46
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            17,
+                            46
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            14,
+                            42
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            23,
+                            17
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            15,
+                            18
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            14,
+                            13
+                        ],
+                        "NO_MASK"
+                    ],
+                    [
+                        [
+                            16,
+                            37
+                        ],
+                        "NO_MASK"
+                    ]
                 ],
                 "cell_size": 25,
                 "resp_time": 1,

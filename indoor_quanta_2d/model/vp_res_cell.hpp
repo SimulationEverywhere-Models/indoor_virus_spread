@@ -48,10 +48,11 @@
 
     struct vp_cell {
         int counter;
+
         bool edge;
         CELL_TYPE type;
         string mask;
-        float num_particles;
+        int num_particles;
         int neighbor_portion;
         int remainder;
         int flow_portion;
@@ -59,8 +60,10 @@
         int inhaled_particles;
         vector<int> direction;
         int time_stayed;
+        float conc;
+        float total_quanta;
 
-        vp_cell() : counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
+        vp_cell() : total_quanta(0), counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), infection_threshold(1000), inhaled_particles(0), direction({0,0}), time_stayed(1800), conc(0) {}  // a default constructor is required
         vp_cell(int i_counter, CELL_TYPE i_type, int i_inhaled) : counter(i_counter), type(i_type), inhaled_particles(i_inhaled) {}
         
     };
@@ -76,15 +79,12 @@
 
     // Required for printing the state of the cell
     std::ostream &operator << (std::ostream &os, const vp_cell &x) {
-        //note that breathing_counter is not included here as it is not useful for visualization and it will only slow the simulation to include it. Keep it this way unless needed for another reason
         os << "<" << x.inhaled_particles << "," << x.num_particles << "," << x.type << ">";
-        //os << "<" << x.counter << "," << x.prev_inhaled_particles << "," << x.inhaled_particles << "," << x.prev_num_particles << "," << x.num_particles << "," << x.prev_type << "," << x.type << ">";
         return os;
     }
 
     // Required for creating vp_cell objects from JSON file
     void from_json(const json& j, vp_cell &s) {
-        //j.at("inhaled").get_to(s.inhaled_particles);
         j.at("counter").get_to(s.counter);
         j.at("type").get_to(s.type);
     }
@@ -99,18 +99,12 @@
         vector<pair<vector<int>, string>> infected_occupants; //positions in scenario for infected occupants
         vector<pair<vector<int>, string>> healthy_occupants; //positions in scenario for healthy occupants
 
-        bool vent; //condition to check if vent is on or off
-        int breathing_production; //viral particle production from breathing
-        int speaking_production; //viral particle production from speaking
-        int coughing_production; //viral particle production from coughing
+        bool vent;
         float cell_size;
         int resp_time;
-        int breathing_rate; //rate at which an occupant breathes
-        int speaking_rate; //rate at which an occupant speaks
-        int coughing_rate; // rate at which and occupant coughs
-        int start_time; //start state for TABLE occupation
-        int infection_threshold; 
+        int start_time;
         float flow_weight;
+        int infection_threshold;
 
         float no_mask_shed;
         float no_mask_efficiency;
@@ -125,15 +119,16 @@
 
         float ERq_resting;
         float ERq_speaking;
-        float IR_resting;
-        float IR_speaking;
+        int IR_resting;
+        int IR_speaking;
         float volume;
         float n0;
         int num_infectious;
+        int num_healthy;
         float IVVR;
 
-        conf(): spreader_mask("NO_MASK"), receiver_mask("NO_MASK"), vent(true), breathing_production(11), speaking_production(22), coughing_production(33), cell_size(25), resp_time(1), breathing_rate(3), start_time(20), infection_threshold(10), flow_weight(1) {}
-        conf(string sm, string rm, vector<pair<vector<int>, string>> io, vector<pair<vector<int>, string>> ho, bool v, int bp, int sp, int cp, float cs, int b, int wc, int vc, int r, int br, int sr, int cr, int st, int ns, int nb, int md, int it, float fw, float sw, float me, float nms, float nme, float cos, float ce, float ss, float se, float nns, float nne, float nnfs, float nnfe, float err, float ers, float irr, float irs, float vol, float nz, float ni, float ivvr): spreader_mask(sm), receiver_mask(rm), infected_occupants(io), healthy_occupants(ho), vent(v), breathing_production(bp), speaking_production(sp), coughing_production(33), cell_size(cs), resp_time(r), breathing_rate(br), speaking_rate(sr), coughing_rate(cr), start_time(st), infection_threshold(it), flow_weight(fw), no_mask_shed(nms), no_mask_efficiency(nme), cotton_shed(cos), cotton_efficiency(ce), surgical_shed(ss), surgical_efficiency(se), n95_shed(nns), n95_efficiency(nne), n95_fit_shed(nnfs), n95_fit_efficiency(nnfe), ERq_resting(err), ERq_speaking(ers), IR_resting(irr), IR_speaking(irs), volume(vol), n0(nz), num_infectious(ni), IVVR(ivvr) {}
+        conf(): spreader_mask("NO_MASK"), receiver_mask("NO_MASK"), vent(true), cell_size(25), resp_time(1), start_time(20), flow_weight(1) {}
+        conf(string sm, string rm, vector<pair<vector<int>, string>> io, vector<pair<vector<int>, string>> ho, bool v, float cs, int b, int wc, int vc, int r, int st, int ns, int nb, int md, float fw, int it, float sw, float me, float nms, float nme, float cos, float ce, float ss, float se, float nns, float nne, float nnfs, float nnfe, float err, float ers, float irr, float irs, float vol, float nz, float ni, float ivvr): spreader_mask(sm), receiver_mask(rm), infected_occupants(io), healthy_occupants(ho), vent(v), cell_size(cs), resp_time(r), start_time(st), flow_weight(fw), infection_threshold(it), no_mask_shed(nms), no_mask_efficiency(nme), cotton_shed(cos), cotton_efficiency(ce), surgical_shed(ss), surgical_efficiency(se), n95_shed(nns), n95_efficiency(nne), n95_fit_shed(nnfs), n95_fit_efficiency(nnfe), ERq_resting(err), ERq_speaking(ers), IR_resting(irr), IR_speaking(irs), volume(vol), n0(nz), num_infectious(ni), IVVR(ivvr) {}
     };
     void from_json(const json& j, conf &s) {
         j.at("infected_occupants").get_to(s.infected_occupants);
@@ -143,6 +138,7 @@
         j.at("resp_time").get_to(s.resp_time);
         j.at("start_time").get_to(s.start_time);
         j.at("flow_weight").get_to(s.flow_weight);
+        j.at("infection_threshold").get_to(s.infection_threshold);
         j.at("receiver").at("mask_type").get_to(s.receiver_mask); 
         j.at("spreader").at("mask_type").get_to(s.spreader_mask);
         j.at("masks").at("NO_MASK").at("shed").get_to(s.no_mask_shed);
@@ -180,39 +176,42 @@
         vector<pair<vector<int>, string>> infected_occupants; //positions in scenario for infected occupants
         vector<pair<vector<int>, string>> healthy_occupants; //positions in scenario for healthy occupants
 
+        /**
+         *  scenario params
+         */
         bool vent; //condition to check if vent is on or off
-        int breathing_production; //viral particle production from breathing
-        int speaking_production; //viral particle production from speaking
-        int coughing_production; //viral particle production from coughing
-        float cell_size;
+        float cell_size; // size of the cell in centimeters
         int resp_time; //time to calculate particle increase distribution in each cell
-        int breathing_rate; //rate at which an occupant breathes
-        int speaking_rate; //rate at which an occupant speaks
-        int coughing_rate; // rate at which and occupant coughs
         int start_time; //start state for CHAIR occupation
-        int infection_threshold; //number of particles needed to infect a person
+        int infection_threshold; //number of particles needed to put a person at risk
         float flow_weight; //percentage of particles that move in the direction of the airflow scale is [0-1]
-        cell_position pos;
+        cell_position pos; // position of the cell
 
-        float no_mask_shed;
-        float no_mask_efficiency;
-        float cotton_shed;
-        float cotton_efficiency;
-        float surgical_shed;
-        float surgical_efficiency;
-        float n95_shed;
-        float n95_efficiency;
-        float n95_fit_shed;
-        float n95_fit_efficiency;
+        /**
+         *  mask params
+         */
+        float no_mask_shed; //percentage of particles that shed with no mask
+        float no_mask_efficiency; //percentage of particles that are blocked with no mask
+        float cotton_shed; //percentage of particles that shed with a cotton mask
+        float cotton_efficiency; //percentage of particles that are blocked with a cotton mask
+        float surgical_shed; //percentage of particles that shed with a surgical mask
+        float surgical_efficiency; //percentage of particles that are blocked with a surgical mask
+        float n95_shed; //percentage of particles that shed with a n95 mask
+        float n95_efficiency; //percentage of particles that are blocked with a n95 mask
+        float n95_fit_shed; //percentage of particles that shed with a n95_fit mask
+        float n95_fit_efficiency; //percentage of particles that are blocked with a n95_fit mask
 
-        float ERq_resting;
-        float ERq_speaking;
-        float IR_resting;
-        float IR_speaking;
-        float volume;
-        float n0;
-        int num_infectious;
-        float IVVR;
+        /**
+         *  quanta params
+         */
+        float ERq_resting; //the emission rate while resting(in quanta)
+        float ERq_speaking; //the emission rate while speaking(in quanta)
+        int IR_resting; //the inhalation rate while resting(in quanta)
+        int IR_speaking; //the inhalation rate while speaking(in quanta)
+        float volume; //the volume of the room
+        float n0; //the initial concentration in a room
+        int num_infectious; //the number of infectious people
+        float IVVR; //the infectiuous viral removal rate (air eschange rate + deposition rate + inactivation rate)
     
         vp_res_cell() : grid_cell<T, vp_cell, int>() {
         }
@@ -223,13 +222,7 @@
                     vent = config.vent;
                     infected_occupants = config.infected_occupants;
                     healthy_occupants = config.healthy_occupants;
-                    breathing_production = config.breathing_production;
-                    speaking_production = config.speaking_production;
-                    coughing_production = config.coughing_production;
                     resp_time = config.resp_time;
-                    breathing_rate = config.breathing_rate;
-                    speaking_rate = config.speaking_rate;
-                    coughing_rate = config.coughing_rate;
                     start_time = config.start_time;
                     infection_threshold = config.infection_threshold;
                     flow_weight = config.flow_weight;
@@ -261,14 +254,11 @@
             switch(new_state.type) {
                 case IMPERMEABLE_STRUCTURE: 
                     new_state.num_particles = 0;
-                    new_state.prev_type = IMPERMEABLE_STRUCTURE;
                     break;
                 case DOOR: 
                     new_state.num_particles = 0;
-                    new_state.prev_type = DOOR;
                     break;
                 case TABLE: {
-                    new_state.prev_type = TABLE;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -285,7 +275,6 @@
                 case VENTILATION:{
                     if(vent) {
                         new_state.num_particles = 0;
-                        new_state.prev_type = VENTILATION;
                         for(auto neighbors: state.neighbors_state) {
                             if(neighbors.second.num_particles < 0) {
                                 assert(false && "vp_cell num_particles cannot be negative");
@@ -294,13 +283,11 @@
                         }
                     }
                     else {
-                        new_state.prev_type = VENTILATION;
                         new_state.num_particles = 0;
                     }
                     break;
                 }
                 case AIR:{
-                    new_state.prev_type = AIR;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -317,7 +304,6 @@
                     break;
                 }
                 case CHAIR:{  
-                    new_state.prev_type = CHAIR;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -332,6 +318,7 @@
 
                     if (new_state.counter == start_time) {
                         for(auto infected: infected_occupants) {
+                            // set location of infected occupants
                             if(pos == infected.first) {
                                 new_state.type = vp_SOURCE; 
                                 new_state.mask = infected.second;
@@ -339,18 +326,18 @@
                                 break;
                             }
                             else {
-                                int random = rand() % 5 + 1;
-                                if(random == 3) {
-                                    //int stayed = rand() % 3600 + 900;
-                                    new_state.type = vp_RECEIVER;
-                                    new_state.mask = receiver_mask;
-                                    new_state.counter = 0;
-                                    //new_state.time_stayed = stayed;
-                                    break;
-                                }
+                                // // randomize location of infected occupants
+                                // int random = rand() % 5 + 1;
+                                // if(random == 3) {
+                                //     new_state.type = vp_RECEIVER;
+                                //     new_state.mask = receiver_mask;
+                                //     new_state.counter = 0;
+                                //     break;
+                                // }
                             }
                         }
                         for(auto healthy: healthy_occupants) {
+                            // set location of healthy occupants
                             if(pos == healthy.first) {
                                 new_state.type = vp_RECEIVER; 
                                 new_state.mask = healthy.second;
@@ -358,15 +345,14 @@
                                 break;
                             }
                             else {
-                                int random = rand() % 5 + 1;
-                                if(random == 3) {
-                                    //int stayed = rand() % 3600 + 900;
-                                    new_state.type = vp_RECEIVER;
-                                    new_state.mask = receiver_mask;
-                                    new_state.counter = 0;
-                                    //new_state.time_stayed = stayed;
-                                    break;
-                                }
+                                // // randomize location of healthy occupants
+                                // int random = rand() % 5 + 1;
+                                // if(random == 3) {
+                                //     new_state.type = vp_RECEIVER;
+                                //     new_state.mask = receiver_mask;
+                                //     new_state.counter = 0;
+                                //     break;
+                                // }
                             }
                         }
                     }
@@ -374,18 +360,9 @@
                     break;
                 }
                 case vp_RECEIVER: {
-                    new_state.prev_type = vp_RECEIVER;
                     int num_neighbors = 0;
                     int num_particles = 0;
-                    /*
-                    if(new_state.counter >= new_state.time_stayed) {
-                        new_state.type = CHAIR;
-                    }
-                    */
-                    if(new_state.inhaled_particles >= infection_threshold) {
-                        new_state.type = INFECTED;
-                        break;
-                    }
+
                     for(auto neighbors: state.neighbors_state) { 
                         if(neighbors.second.num_particles < 0){
                             assert(false && "vp_cell num_particles cannot be negative");
@@ -394,14 +371,13 @@
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
                     computeParticles(new_state, num_neighbors, num_particles);
-                    if(new_state.counter % breathing_rate == 0) {
+                    if(new_state.counter % IR_resting == 0) {
                         computeInhalation(new_state);
                     }
                     new_state.counter++;
                     break;
                 }
                 case vp_SOURCE:{
-                    new_state.prev_type = vp_SOURCE;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -412,15 +388,7 @@
                         setDirection(new_state, neighbors);
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
-                    if(new_state.counter % breathing_rate == 0 && new_state.counter >= breathing_rate) {
-                        computeEmission(new_state, num_particles);
-                    }
-                    if(new_state.counter % speaking_rate == 0 && new_state.counter >= speaking_rate) {
-                        computeEmission(new_state, num_particles);
-                    }
-                    if(new_state.counter % coughing_rate == 0 && new_state.counter >= coughing_rate) {
-                        computeEmission(new_state, num_particles);
-                    }
+                    computeEmission(new_state, num_particles);
                     new_state.counter++;
 
                     computeParticles(new_state, num_neighbors, num_particles);
@@ -428,7 +396,6 @@
                     break;
                 }
                 case INFECTED: {
-                    new_state.prev_type = INFECTED;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -440,7 +407,7 @@
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
                     computeParticles(new_state, num_neighbors, num_particles);
-                    if(new_state.counter % breathing_rate == 0) {
+                    if(new_state.counter % IR_resting == 0) {
                         computeInhalation(new_state);
                     }
                     new_state.counter++;
@@ -453,11 +420,17 @@
             return new_state;
         }
 
+        /**
+         * Calculates the number of particles to distribute to the neighbouring cells
+         * 
+         * @param curr reference to the cell
+         * @param num_neighbors reference to the number of neighbours
+         * @param num_particles reference to the number of particles
+         */
         void computeParticles(vp_cell& curr, int const& num_neighbors, int const& num_particles) const {
             curr.neighbor_portion = 0;
             vector<int> temp = {0,0};
             if(curr.direction != temp && !curr.edge) {
-                curr.prev_num_particles = curr.num_particles;
                 curr.num_particles = curr.remainder;
                 curr.num_particles += num_particles;
 
@@ -477,7 +450,6 @@
             }
             */
             else {
-                curr.prev_num_particles = curr.num_particles;
                 curr.num_particles = curr.num_particles % num_neighbors;
                 curr.num_particles += num_particles;
 
@@ -487,6 +459,12 @@
             }  
         }
 
+        /**
+         * Sets the direction of the airflow in a given cell
+         * 
+         * @param curr reference to the cell
+         * @param nb reference to the neighbouring cell
+         */
         void setDirection(vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
             vector<int> N = {0,-1};
             vector<int> E = {1,0};
@@ -498,7 +476,6 @@
             vector<int> shape = this->map.shape;
             vector<int> currPos = pos;
 
-            //cout << this->map.shape << endl;
             transform(shape.begin(), shape.end(), currPos.begin(), diff.begin(), minus<int>());
             if(curr.type == VENTILATION && nb.second.type != IMPERMEABLE_STRUCTURE) {
                 if(diff.at(1) == 0) {
@@ -550,6 +527,14 @@
             }
         }
 
+        /**
+         * loops through the neighbouring cells, and collects the particles that need to be distributed
+         * 
+         * @param num_neighbors reference to the number of neighbouring cells
+         * @param num_particles reference to the number of particles to increase by
+         * @param curr reference to the cell
+         * @param nb reference to the neighbouring cell
+         */
         void loopNeighbors(int& num_neighbors, int& num_particles, vp_cell& curr, pair<cell_position, vp_cell> const& nb) const {
             vector<int> N = {0,-1};
             vector<int> E = {1,0};
@@ -576,28 +561,57 @@
             return;
         }
 
+        /**
+         * Calculates the increase in viral particles from a cell which has an infected occupant
+         * 
+         * @param curr a reference to the cell 
+         * @param num_particles a reference to the number of particles to increase by
+         */
         void computeEmission(vp_cell& curr, int& num_particles) const {
-            float production = concentration(curr.counter, ERq_speaking, num_infectious, IVVR, volume, n0);
+            concentration(curr, ERq_speaking, num_infectious, IVVR, volume, n0);
+
+            float increase = curr.conc;
             int scale = 10000;
-            cout << production * scale << " for cell" << pos << " at timestep - " << curr.counter << endl;
+            int scaled = increase * scaled;
+            // cout << scaled << " for cell" << pos << " at timestep - " << curr.counter << endl;
+            // cout << "total quanta for cell" << pos << curr.total_quanta << endl;
             if(curr.mask == "NO_MASK") {
-                num_particles += (production * scale);
+                num_particles += scaled;
             }
             else if(curr.mask == "COTTON") {
-                num_particles += (production * cotton_shed * scale);
+                num_particles += (scaled * cotton_shed);
             }
             else if(curr.mask == "SURGICAL") {
-                num_particles += (production * surgical_shed * scale);
+                num_particles += (scaled * surgical_shed);
             }
             else if(curr.mask == "N95") {
-                num_particles += (production * n95_shed * scale);
+                num_particles += (scaled * n95_shed);
             }
             else if(curr.mask == "N95_FIT") {
-                num_particles += (production * n95_fit_shed * scale);
+                num_particles += (scaled * n95_fit_shed);
             }
         }
 
         void computeInhalation(vp_cell& curr) const {
+            if(curr.inhaled_particles >= infection_threshold && curr.type != INFECTED) {
+                float IOS = infected_occupants.size();
+                float HOS = healthy_occupants.size();
+                float PI = IOS/HOS;
+                //cout << "PI: " << PI << endl;
+                float R = PI * 0.145;
+                //cout << "R: " << R << endl;
+                int odds = 100/(R * 100);
+                //cout << "odds: " << odds << endl;
+                int random = rand() % odds + 1;
+                cout << random << endl;
+                if(random == 2) {
+                    cout << "infected" << endl;
+                    curr.type = INFECTED;
+                    curr.mask = receiver_mask;
+                    curr.counter = 0;
+
+                }
+            }
             if(curr.mask == "NO_MASK") {
                 curr.inhaled_particles += (curr.num_particles * (1 - no_mask_efficiency));
                 curr.num_particles -= (curr.num_particles * (1 - no_mask_efficiency));
@@ -620,12 +634,27 @@
             }
         }
 
-        float concentration(float t, float ERq, int I, float IVVR, float V, float n0) const {
-            float time = t;
+        /**
+         * Calculates the concentration in one cell at a given time
+         * 
+         * @param curr a reference to the cell 
+         * @param ERq the Emission Rate in quanta
+         * @param I the number of infectious people
+         * @param IVVR the viral removal rate, (virus inactivation + air exchange rate + deposition rate)
+         * @param V the volume of the room
+         * @param n0 the concentration at time 0
+         */
+        void concentration(vp_cell& curr, float ERq, int I, float IVVR, float V, float n0) const {
+            float time = curr.counter;
             time /= 3600;
-            float result;
-            result = ( (ERq * I) / (IVVR * V) ) + ( (n0 - ( (ERq * I) / IVVR) ) * (pow(M_E, - (IVVR * time) ) / V) );
-            return result;
+            float conc;
+            float total;
+            float increase;
+            conc = ( (ERq * I) / (IVVR * V) ) + ( (n0 - ( (ERq * I) / IVVR) ) * (pow(M_E, - (IVVR * time) ) / V) );
+            total = conc * V;
+            increase = total - curr.total_quanta;
+            curr.total_quanta = total;
+            curr.conc = increase;
         }
 
         // It returns the delay to communicate cell's new state.
