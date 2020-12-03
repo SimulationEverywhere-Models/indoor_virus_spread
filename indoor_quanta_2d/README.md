@@ -1,13 +1,21 @@
-# Advanced Model
+# Quanta Model
 
 ## Description
-
+Simulates particle distribution in an indoor environment using quanta as a unit of measurement.
 
 ## Parameters
 This is the list of cell paramters that you can change from the JSON file
 
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
+| quanta_params        | Parameters to calculate the concentration of quanta in a cell at time (t)                                    |
+| ERq_resting          | The emission rate at rest (quanta/h)                                                                         |
+| ERq_speaking         | The emission rate while speaking (quanta/h)                                                                  | 
+| IR_resting           | The inhalation rate for an occupant at rest (1 breath every `IR_resting` seconds)                            |
+| IR_speaking          | The inhalation rate for an occupant while speaking (1 breath every `IR_speaking` seconds)                    | 
+| volume               | The volume of the room (cubic meters)                                                                        |
+| n0                   | Initial concentration of infectious particles in the room                                                    |
+| IVVR                 | Infectious viral removal rate (Air exchange rate + particle deposition + viral inactivation)                 |
 | vent                 | Set to **true** for vents on and **false** for vents off                                                     |
 | infected_occupants   | Array containing positions for infected occupants with their respective mask type
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
@@ -15,19 +23,13 @@ This is the list of cell paramters that you can change from the JSON file
 | healthy_occupants    | Array containing positions for healthy occupants with their respective mask type
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
 |                      | i.e., `[[[5,24], "SURGICAL"], [[17,46], "NO_MASK"], ...]]`                                                   |
-| breathing_production | Number of particles generated from breathing                                                                 |
-| speaking_production  | Number of particles generated from speaking                                                                  |
-| coughing_production  | Number of particles generated from coughing                                                                  |
-| breathing_rate       | Rate at which the occupant breathes(in seconds)                                                              |
-| speaking_rate        | Rate at which the occupant speaks(in seconds)                                                                |
-| coughing_rate        | Rate at which the occupant coughs(in seconds)                                                                |
 | flow_weight          | The percentage of particles that travel  in the direction of the airflow                                     |
-| infection_threshold  | The number of particles it takes to infect an occupant                                                       |
+| infection_threshold  | The number of particles it takes before an occupant is at risk of being infected                             |
 | mask_type            | The type of mask the receiver or spreader is wearing by default. Types include: NO_MASK, COTTON, SURGICAL, N95, N95_FIT |
 | cell_size            | The size of the cell(in centimeters)                                                                         |
 | resp_time            | The default response time for a cell state to update(in seconds)                                             |
 | start_time           | Start time for occupants to enter building(in second)                                                        |
-| masks           | Different mask types with their shedding rate(percentage of particles exhaled) and efficiency(percentage of particles that are blocked from being inhaled)                                                       |
+| masks                | Different mask types with their shedding rate(percentage of particles exhaled) and efficiency(percentage of particles that are blocked from being inhaled) |
 
 ## Running the model
 You will need cmake to compile the program,
@@ -50,9 +52,3 @@ Compiling and running the model:
   - (Windows) `./vp.exe ./config/<the scenario name>.json <number of timesteps to run simulation>`
     - i.e., `./vp.exe ./config/Restaurant-scenario1.json 500`
 - The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
-
-## Roadmap
-Make a connection between RNA/Viral titer and Quanta and implement relation in model
-- [RNA/Viral titer with masks](https://msphere.asm.org/content/5/5/e00637-20)
-- [Definition of quanta and relation with RNA/Viral titer](https://www.medrxiv.org/content/10.1101/2020.06.01.20118984v1)
-
