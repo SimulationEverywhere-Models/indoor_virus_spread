@@ -8,7 +8,7 @@ This is the list of cell paramters that you can change from the JSON file
 
 | Parameter            | Usage                                                                                                        |
 |----------------------|--------------------------------------------------------------------------------------------------------------|
-| quanta_params        | Parameters to calculate the concentration of quanta in a cell at time (t)                                    |
+| quanta_params        |                                                                                                              |
 | ERq_resting          | The emission rate at rest (quanta/h)                                                                         |
 | ERq_speaking         | The emission rate while speaking (quanta/h)                                                                  | 
 | IR_resting           | The inhalation rate for an occupant at rest (1 breath every `IR_resting` seconds)                            |
@@ -16,6 +16,7 @@ This is the list of cell paramters that you can change from the JSON file
 | volume               | The volume of the room (cubic meters)                                                                        |
 | n0                   | Initial concentration of infectious particles in the room                                                    |
 | IVVR                 | Infectious viral removal rate (Air exchange rate + particle deposition + viral inactivation)                 |
+| scenario params      |                                                                                                              |
 | vent                 | Set to **true** for vents on and **false** for vents off                                                     |
 | infected_occupants   | Array containing positions for infected occupants with their respective mask type
 |                      | JSON format: `[[[<x_position, y_position>], <mask_type>], [[<x_position, y_position>], <mask_type>], ...]]`  
