@@ -7,4 +7,4 @@ model/vp
 cmake_install.*
 CMakeCache.*
 CTestTestfile.*
-Makefile.*
+Makefile*

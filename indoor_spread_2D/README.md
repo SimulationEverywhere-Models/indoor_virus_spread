@@ -1,7 +1,7 @@
 # Advanced Model
 
 ## Description
-
+Advanced model with airflow influencing particle movement
 
 ## Parameters
 This is the list of cell paramters that you can change from the JSON file
@@ -40,19 +40,12 @@ Windows installation:
 - Run the installer and follow the instructions
 
 Compiling and running the model:
-- before compiling, in **CADMIUM/Cell-DEVS-Cadmium-Simulation-Environment/Cadmium-Cell-DEVS-Models/indoor_virus_spread/indoor_spread_2D** create a new folder called results, this is where all the simulation results will be stored
 - Navigate to **CADMIUM/Cell-DEVS-Cadmium-Simulation-Environment/Cadmium-Cell-DEVS-Models/indoor_virus_spread/indoor_spread_2D** where CMakeLists is located and in your terminal run `cmake ./`
 - A new Makefile will be created in your directory, in the terminal again run `make`
 - A new executable file will be created in the same folder, it's caled vp (Linux) / vp.exe (Windows)
 - To run a simulation, in your terminal run 
   - (Linux) `./vp ./config/<the scenario name>.json <number of timesteps to run simulation>`
-    - i.e., `./vp ./config/Restaurant-scenario1.json 500`
+    - i.e., `./vp ./config/restaurant_vent1.json 500`
   - (Windows) `./vp.exe ./config/<the scenario name>.json <number of timesteps to run simulation>`
-    - i.e., `./vp.exe ./config/Restaurant-scenario1.json 500`
-- The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
-
-## Roadmap
-Make a connection between RNA/Viral titer and Quanta and implement relation in model
-- [RNA/Viral titer with masks](https://msphere.asm.org/content/5/5/e00637-20)
-- [Definition of quanta and relation with RNA/Viral titer](https://www.medrxiv.org/content/10.1101/2020.06.01.20118984v1)
-
+    - i.e., `./vp.exe ./config/restaurant_vent1.json 500`
+- **NOTE:** The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them for future usage.
