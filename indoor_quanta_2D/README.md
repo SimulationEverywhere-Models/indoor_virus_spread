@@ -54,6 +54,3 @@ Compiling and running the model:
 <<<<<<< HEAD:indoor_quanta_2D/README.md
     - i.e., `./vp.exe ./config/restaurant_quanta1.json 500`
 - **NOTE:** The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them for future usage.
-=======
-    - i.e., `./vp.exe ./config/Restaurant-scenario1.json 500`
-- The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
