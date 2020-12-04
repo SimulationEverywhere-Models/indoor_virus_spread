@@ -57,4 +57,3 @@ Compiling and running the model:
 =======
     - i.e., `./vp.exe ./config/Restaurant-scenario1.json 500`
 - The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
->>>>>>> b4a03f624f6af5decda9b2bc74c20551a333e562:indoor_quanta_2d/README.md
