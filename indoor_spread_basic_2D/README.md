@@ -34,5 +34,5 @@ Compiling and running the model:
     - i.e., `./vp ./config/restaurant_2d.json 500`
   - (Windows) `./vp.exe ./config/<the scenario name>.json <number of timesteps to run simulation>`
     - i.e., `./vp.exe ./config/restaurant_2d.json 500`
-- The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them.
+- **NOTE:** The results will be generated in the results folder. Each time you run a new simulation the previous results will get overriden, so save them in another folder if you need them for future usage.
 
