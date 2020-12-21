@@ -44,6 +44,8 @@
     /******COMPLEX STATE STRUCTURE*******/
     /************************************/
 
+    // float total_q = 0;
+
     enum CELL_TYPE {AIR=-100, vp_SOURCE=-200, IMPERMEABLE_STRUCTURE=-300, DOOR=-400, TABLE=-500, VENTILATION=-600, CHAIR=-700, vp_RECEIVER=-800, INFECTED=-900};
 
     struct vp_cell {
@@ -59,12 +61,11 @@
         int infection_threshold;
         int inhaled_particles;
         vector<int> direction;
-        int time_stayed;
         float conc;
         float total_quanta;
 
-        vp_cell() : total_quanta(0), counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), infection_threshold(1000), inhaled_particles(0), direction({0,0}), time_stayed(1800), conc(0) {}  // a default constructor is required
-        vp_cell(int i_counter, CELL_TYPE i_type, int i_inhaled) : counter(i_counter), type(i_type), inhaled_particles(i_inhaled) {}
+        vp_cell() : total_quanta(0), counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), infection_threshold(1000), inhaled_particles(0), direction({0,0}), conc(0) {}  // a default constructor is required
+        vp_cell(int i_counter, CELL_TYPE i_type) : counter(i_counter), type(i_type) {}
         
     };
 
@@ -311,16 +312,16 @@
                                 new_state.counter = 0; 
                                 break;
                             }
-                            else {
-                                // // randomize location of infected occupants
-                                // int random = rand() % 5 + 1;
-                                // if(random == 3) {
-                                //     new_state.type = vp_RECEIVER;
-                                //     new_state.mask = receiver_mask;
-                                //     new_state.counter = 0;
-                                //     break;
-                                // }
-                            }
+                            // else {
+                            //     // randomize location of infected occupants
+                            //     int random = rand() % 5 + 1;
+                            //     if(random == 3) {
+                            //         new_state.type = vp_RECEIVER;
+                            //         new_state.mask = receiver_mask;
+                            //         new_state.counter = 0;
+                            //         break;
+                            //     }
+                            // }
                         }
                         for(auto healthy: healthy_occupants) {
                             // set location of healthy occupants
@@ -330,16 +331,16 @@
                                 new_state.counter = 0; 
                                 break;
                             }
-                            else {
-                                // // randomize location of healthy occupants
-                                // int random = rand() % 5 + 1;
-                                // if(random == 3) {
-                                //     new_state.type = vp_RECEIVER;
-                                //     new_state.mask = receiver_mask;
-                                //     new_state.counter = 0;
-                                //     break;
-                                // }
-                            }
+                            // else {
+                            //     // randomize location of healthy occupants
+                            //     int random = rand() % 5 + 1;
+                            //     if(random == 3) {
+                            //         new_state.type = vp_RECEIVER;
+                            //         new_state.mask = receiver_mask;
+                            //         new_state.counter = 0;
+                            //         break;
+                            //     }
+                            // }
                         }
                     }
                     new_state.counter++;
@@ -357,10 +358,14 @@
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
                     computeParticles(new_state, num_neighbors, num_particles);
-                    if(new_state.counter % IR_resting == 0) {
+                    if(IR_resting != 0 && new_state.counter % IR_resting == 0 && new_state.counter > IR_resting) {
+                        computeInhalation(new_state);
+                    }
+                    else if(IR_speaking != 0 && new_state.counter % IR_speaking == 0 && new_state.counter > IR_speaking) {
                         computeInhalation(new_state);
                     }
                     new_state.counter++;
+
                     break;
                 }
                 case vp_SOURCE:{
@@ -374,11 +379,16 @@
                         setDirection(new_state, neighbors);
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
-                    computeEmission(new_state, num_particles);
+                    if(IR_resting != 0 && new_state.counter % IR_resting == 0 && new_state.counter > IR_resting) {
+                        computeEmission(new_state, num_particles, ERq_resting);
+                    }
+                    else if(IR_speaking != 0 && new_state.counter % IR_speaking == 0 && new_state.counter > IR_speaking) {
+                        computeEmission(new_state, num_particles, ERq_speaking);
+                    }
                     new_state.counter++;
 
                     computeParticles(new_state, num_neighbors, num_particles);
-        
+
                     break;
                 }
                 case INFECTED: {
@@ -393,7 +403,10 @@
                         loopNeighbors(num_neighbors, num_particles, new_state, neighbors);
                     }
                     computeParticles(new_state, num_neighbors, num_particles);
-                    if(new_state.counter % IR_resting == 0) {
+                    if(IR_resting != 0 && new_state.counter % IR_resting == 0 && new_state.counter > IR_resting) {
+                        computeInhalation(new_state);
+                    }
+                    else if(IR_speaking != 0 && new_state.counter % IR_speaking == 0 && new_state.counter > IR_speaking) {
                         computeInhalation(new_state);
                     }
                     new_state.counter++;
@@ -423,18 +436,16 @@
                 int flow = (curr.num_particles - curr.remainder) * flow_weight;
                 curr.flow_portion = flow;
                 curr.remainder += (curr.num_particles - flow - curr.remainder);
-
+                
                 if(curr.remainder % num_neighbors >= 0 && curr.remainder >= num_neighbors) {
                     curr.neighbor_portion = curr.remainder/num_neighbors;
                     curr.remainder = curr.remainder % num_neighbors;
                 } 
             }  
-            /*
-            else if(curr.direction != temp && curr.edge) {
-                curr.num_particles += num_particles;
-                return;
-            }
-            */
+            // else if(curr.direction != temp && curr.edge) {
+            //     curr.num_particles += num_particles;
+            //     return;
+            // }
             else {
                 curr.num_particles = curr.num_particles % num_neighbors;
                 curr.num_particles += num_particles;
@@ -553,12 +564,14 @@
          * @param curr a reference to the cell 
          * @param num_particles a reference to the number of particles to increase by
          */
-        void computeEmission(vp_cell& curr, int& num_particles) const {
-            concentration(curr, ERq_speaking, infected_occupants.size(), IVVR, volume, n0);
+        void computeEmission(vp_cell& curr, int& num_particles, float const& ERq) const {
+            concentration(curr, ERq, infected_occupants.size(), IVVR, volume, n0);
 
             float increase = curr.conc;
             int scale = 10000;
-            int scaled = increase * scaled;
+            int scaled = increase * scale;
+            // total_q += scaled;
+            // cout << "total quanta in space: " << total_q << endl;
             // cout << scaled << " for cell" << pos << " at timestep - " << curr.counter << endl;
             // cout << "total quanta for cell" << pos << curr.total_quanta << endl;
             if(curr.mask == "NO_MASK") {
@@ -583,17 +596,12 @@
                 float IOS = infected_occupants.size();
                 float HOS = healthy_occupants.size();
                 float PI = IOS/HOS;
-                //cout << "PI: " << PI << endl;
                 float R = PI * 0.145;
-                //cout << "R: " << R << endl;
                 int odds = 100/(R * 100);
-                //cout << "odds: " << odds << endl;
                 int random = rand() % odds + 1;
-                cout << random << endl;
                 if(random == 2) {
                     curr.type = INFECTED;
                     curr.counter = 0;
-
                 }
             }
             if(curr.mask == "NO_MASK") {

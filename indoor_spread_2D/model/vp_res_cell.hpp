@@ -50,20 +50,16 @@
         int counter;
         bool edge;
         CELL_TYPE type;
-        CELL_TYPE prev_type;
         string mask;
-        int prev_num_particles;
         int num_particles;
         int neighbor_portion;
         int remainder;
         int flow_portion;
         int infection_threshold;
-        int prev_inhaled_particles;
         int inhaled_particles;
         vector<int> direction;
-        int time_stayed;
 
-        vp_cell() : counter(-1), edge(false), prev_type(AIR), mask("NO_MASK"), type(AIR), prev_num_particles(0), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), prev_inhaled_particles(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}), time_stayed(1800) {}  // a default constructor is required
+        vp_cell() : counter(-1), edge(false), mask("NO_MASK"), type(AIR), num_particles(0), neighbor_portion(0), remainder(0), flow_portion(0), inhaled_particles(0), infection_threshold(1000), direction({0,0}) {}  // a default constructor is required
         vp_cell(int i_counter, CELL_TYPE i_type, int i_inhaled) : counter(i_counter), type(i_type), inhaled_particles(i_inhaled) {}
         
     };
@@ -165,14 +161,6 @@
         j.at("masks").at("N95").at("efficiency").get_to(s.n95_efficiency);
         j.at("masks").at("N95_FIT").at("shed").get_to(s.n95_fit_shed);
         j.at("masks").at("N95_FIT").at("efficiency").get_to(s.n95_fit_efficiency);
-        // j.at("quanta_params").at("ERq_resting").get_to(s.ERq_resting);
-        // j.at("quanta_params").at("ERq_speaking").get_to(s.ERq_speaking);
-        // j.at("quanta_params").at("IR_resting").get_to(s.IR_resting);
-        // j.at("quanta_params").at("IR_speaking").get_to(s.IR_speaking);
-        // j.at("quanta_params").at("volume").get_to(s.volume);
-        // j.at("quanta_params").at("n0").get_to(s.n0);
-        // j.at("quanta_params").at("num_infectious").get_to(s.num_infectious);
-        // j.at("quanta_params").at("IVVR").get_to(s.IVVR);
     }
 
     template <typename T>
@@ -275,10 +263,8 @@
                     break;
                 case DOOR: 
                     new_state.num_particles = 0;
-                    new_state.prev_type = DOOR;
                     break;
                 case TABLE: {
-                    new_state.prev_type = TABLE;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -295,7 +281,6 @@
                 case VENTILATION:{
                     if(vent) {
                         new_state.num_particles = 0;
-                        new_state.prev_type = VENTILATION;
                         for(auto neighbors: state.neighbors_state) {
                             if(neighbors.second.num_particles < 0) {
                                 assert(false && "vp_cell num_particles cannot be negative");
@@ -304,13 +289,11 @@
                         }
                     }
                     else {
-                        new_state.prev_type = VENTILATION;
                         new_state.num_particles = 0;
                     }
                     break;
                 }
                 case AIR:{
-                    new_state.prev_type = AIR;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -327,7 +310,6 @@
                     break;
                 }
                 case CHAIR:{  
-                    new_state.prev_type = CHAIR;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -351,11 +333,9 @@
                             else {
                                 int random = rand() % 5 + 1;
                                 if(random == 3) {
-                                    //int stayed = rand() % 3600 + 900;
                                     new_state.type = vp_RECEIVER;
                                     new_state.mask = receiver_mask;
                                     new_state.counter = 0;
-                                    //new_state.time_stayed = stayed;
                                     break;
                                 }
                             }
@@ -370,11 +350,9 @@
                             else {
                                 int random = rand() % 5 + 1;
                                 if(random == 3) {
-                                    //int stayed = rand() % 3600 + 900;
                                     new_state.type = vp_RECEIVER;
                                     new_state.mask = receiver_mask;
                                     new_state.counter = 0;
-                                    //new_state.time_stayed = stayed;
                                     break;
                                 }
                             }
@@ -411,7 +389,6 @@
                     break;
                 }
                 case vp_SOURCE:{
-                    new_state.prev_type = vp_SOURCE;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
@@ -434,11 +411,10 @@
                     new_state.counter++;
 
                     computeParticles(new_state, num_neighbors, num_particles);
-        
+
                     break;
                 }
                 case INFECTED: {
-                    new_state.prev_type = INFECTED;
                     int num_neighbors = 0;
                     int num_particles = 0;
 
